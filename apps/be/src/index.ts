@@ -1,3 +1,3 @@
-import { initServer } from "./app";
+import { initBE } from "./app";
 
-initServer().catch(console.error);
+initBE().catch(console.error);

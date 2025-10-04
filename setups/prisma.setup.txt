@@ -1,0 +1,4 @@
+npx prisma generate
+npx prisma migrate dev
+docker start nawanapam-postgres
+docker stop nawanapam-postgres

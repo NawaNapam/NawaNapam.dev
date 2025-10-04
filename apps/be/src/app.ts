@@ -2,18 +2,21 @@ import express from "express";
 import cors from "cors";
 import http from "http";
 import { SocketService } from "./services/socket.service";
+import "dotenv/config";
 
 const app = express();
 const httpServer = http.createServer(app);
 
-export async function initServer() {
+const PORT = process.env.PORT;
+
+export async function initBE() {
   app.use(express.json());
   app.use(cors());
 
-  const socketService = new SocketService(httpServer);
+  const socketService = SocketService.getInstance(httpServer);
   socketService.initializeSocket();
 
-  httpServer.listen(8080, () => {
-    console.log("Server is running on http://localhost:8080");
+  httpServer.listen(PORT, () => {
+    console.log(`Server is running on http://localhost:${PORT}`);
   });
 }

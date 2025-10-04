@@ -1,134 +1,82 @@
-import type { NextAuthOptions, User } from "next-auth";
 import GoogleProvider from "next-auth/providers/google";
 import CredentialsProvider from "next-auth/providers/credentials";
 import bcrypt from "bcryptjs";
-import { connectDB } from "./db";
-import usersModel from "@/models/users.model";
+import { PrismaAdapter } from "@next-auth/prisma-adapter";
+import type { NextAuthOptions } from "next-auth";
+import { prisma } from "./prisma";
+import type { User as NextAuthUser } from "next-auth";
 
 export const authOptions: NextAuthOptions = {
+  adapter: PrismaAdapter(prisma),
   providers: [
     GoogleProvider({
       clientId: process.env.GOOGLE_CLIENT_ID!,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
     }),
+
     CredentialsProvider({
-      name: "Credentials",
+      name: "credentials",
       credentials: {
-        email: { label: "Email", type: "email" },
+        email: { label: "Email", type: "text" },
         password: { label: "Password", type: "password" },
       },
       async authorize(credentials) {
-        if (!credentials?.email || !credentials.password) {
-          throw new Error("Email and password are required");
+        if (!credentials?.email || !credentials?.password) {
+          return null;
         }
 
-        await connectDB();
-        const user = await usersModel.findOne({ email: credentials.email });
+        const user = await prisma.user.findUnique({
+          where: { email: credentials.email },
+        });
 
-        if (!user || !user.password) {
-          throw new Error("Invalid credentials");
+        if (!user || !user.passwordHash) {
+          return null;
         }
 
         const isValid = await bcrypt.compare(
           credentials.password,
-          user.password
+          user.passwordHash
         );
-        if (!isValid) throw new Error("Invalid credentials");
+
+        if (!isValid) {
+          return null;
+        }
 
         return {
-          id: user._id.toString(),
-          email: user.email,
+          id: user.id,
           name: user.name,
+          email: user.email,
           image: user.image,
-          role: user.role || "user", // Add role support
-        };
+          username: user.username,
+        } as NextAuthUser;
       },
     }),
   ],
 
+  session: { strategy: "jwt" },
+
   callbacks: {
-    async signIn({ user, account }) {
-      await connectDB();
-
-      let existing = await usersModel.findOne({ email: user.email });
-      if (!existing) {
-        existing = await usersModel.create({
-          name: user.name,
-          email: user.email,
-          image: user.image,
-          provider: account?.provider || "credentials",
-          role: "user", // Default role
-        });
-      }
-
-      (user as User).id = existing._id.toString();
-      (user as User).role = existing.role;
-      return true;
-    },
-
-    async jwt({ token, user, trigger, session }) {
-      // Initial sign in
-      if (user && user.id) {
+    async jwt({ token, user }) {
+      if (user) {
         token.id = user.id;
-        token.role = user.role || "user";
+        if ("username" in user && user.username) {
+          token.username = user.username;
+        }
       }
-
-      // Update token when session is updated
-      if (trigger === "update" && session) {
-        token = { ...token, ...session };
-      }
-
-      // Add timestamp for token validation
-      if (!token.iat) {
-        token.iat = Math.floor(Date.now() / 1000);
-      }
-
       return token;
     },
 
     async session({ session, token }) {
-      if (session.user && token.id) {
+      if (token) {
         session.user.id = token.id as string;
-        session.user.role = token.role;
+        session.user.username = token.username as string;
       }
-
-      // Add session metadata
-      session.tokenTimestamp = token.iat;
-
       return session;
     },
   },
 
-  session: {
-    strategy: "jwt",
-    maxAge: 24 * 60 * 60, // 24 hours
-    updateAge: 60 * 60, // 1 hour
-  },
-
-  jwt: {
-    maxAge: 24 * 60 * 60, // 24 hours
-  },
-
   pages: {
     signIn: "/login",
-    signOut: "/login",
-    error: "/login",
   },
-
   secret: process.env.NEXTAUTH_SECRET,
-
-  // Additional security options
-  useSecureCookies: process.env.NODE_ENV === "production",
-
-  events: {
-    async signIn({ user, account, isNewUser }) {
-      console.log(`User ${user.email} signed in with ${account?.provider}`);
-      if (isNewUser) {
-        console.log(`New user registered: ${user.email}`);
-      }
-    },
-    async signOut({ token }) {
-      console.log(`User signed out: ${token?.email}`);
-    },
-  },
 };
