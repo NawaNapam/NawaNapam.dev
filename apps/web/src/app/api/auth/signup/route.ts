@@ -30,7 +30,6 @@ export async function POST(req: Request) {
         passwordHash,
         username,
         name: username,
-        provider: "credentials",
       },
     });
 
