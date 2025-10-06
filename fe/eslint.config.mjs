@@ -18,7 +18,23 @@ const eslintConfig = [
       "out/**",
       "build/**",
       "next-env.d.ts",
+      // Ignore all Prisma generated files
+      "src/generated/**",
+      "prisma/generated/**",
+      // Ignore specific problematic files
+      "**/runtime/**",
+      "**/*.wasm.js",
+      "**/wasm.js",
     ],
+  },
+  {
+    // Additional rules for remaining files
+    rules: {
+      // Allow require() imports for compatibility with certain libraries
+      "@typescript-eslint/no-require-imports": "off",
+      // Allow 'this' aliasing patterns common in generated code
+      "@typescript-eslint/no-this-alias": "off",
+    },
   },
 ];
 

@@ -1,5 +1,12 @@
 # .eslintignore
-src/generated/
-node_modules/
-.next/
+src/generated/**
+prisma/generated/**
+node_modules/**
+.next/**
+out/**
+build/**
+next-env.d.ts
 *.config.js
+**/*.wasm.js
+**/wasm.js
+**/runtime/**
