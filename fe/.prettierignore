@@ -1,0 +1,27 @@
+# -----------------------------
+# Node / Build outputs
+# -----------------------------
+node_modules/
+.next/
+out/
+build/
+dist/
+
+# -----------------------------
+# TypeScript / Next.js generated files
+# -----------------------------
+next-env.d.ts
+**/generated/**
+**/runtime/**
+
+# -----------------------------
+# Prisma
+# -----------------------------
+src/generated/**
+prisma/generated/**
+
+# -----------------------------
+# WebAssembly / Misc
+# -----------------------------
+**/*.wasm.js
+**/wasm.js
