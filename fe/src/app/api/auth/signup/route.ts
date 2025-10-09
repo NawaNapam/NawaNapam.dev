@@ -7,6 +7,7 @@ export async function POST(req: Request) {
     const body = await req.json();
     const { email, password, username } = body;
 
+    // Validation
     if (!email || !password || !username) {
       return NextResponse.json(
         { error: "Missing required fields" },
@@ -14,25 +15,52 @@ export async function POST(req: Request) {
       );
     }
 
-    const passwordHash = await bcrypt.hash(password, 10);
+    // Check if user already exists (email or username)
+    const existingUser = await prisma.user.findFirst({
+      where: {
+        OR: [{ email: email }, { username: username }],
+      },
+    });
 
-    const user = {
-      email: email,
-      passwordHash: passwordHash,
-      username: username,
-      name: username,
-    };
+    if (existingUser) {
+      const field = existingUser.email === email ? "Email" : "Username";
+      return NextResponse.json(
+        { error: `${field} already exists` },
+        { status: 400 }
+      );
+    }
+
+    const passwordHash = await bcrypt.hash(password, 12);
+
+    const createdUser = await prisma.user.create({
+      data: {
+        email: email.toLowerCase(),
+        passwordHash: passwordHash,
+        username: username,
+        name: username,
+        isAnonymous: false, // Set to false for registered users
+      },
+      select: {
+        id: true,
+        email: true,
+        username: true,
+        name: true,
+        createdAt: true,
+      },
+    });
 
     return NextResponse.json(
-      { message: "User created successfully", user },
+      {
+        message: "User created successfully",
+        user: createdUser,
+      },
       { status: 201 }
     );
   } catch (error) {
+    console.error("Signup error:", error);
     return NextResponse.json(
-      { error: "Internal server error: " + error },
+      { error: "Internal server error" },
       { status: 500 }
     );
   }
 }
-
-// end point - /api/auth/signup

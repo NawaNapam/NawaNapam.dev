@@ -3,35 +3,55 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { signIn } from "next-auth/react";
+import Link from "next/link";
 
 export default function SignupPage() {
   const [email, setEmail] = useState("");
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
 
   const handleSignup = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
+    setIsLoading(true);
 
-    const res = await fetch("/api/auth/signup", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ email, password, username }),
-    });
+    try {
+      const res = await fetch("/api/auth/signup", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, password, username }),
+      });
 
-    const data = await res.json();
-    if (!res.ok) {
-      setError(data.error || "Signup failed");
-      return;
+      const data = await res.json();
+      if (!res.ok) {
+        setError(data.error || "Signup failed");
+        return;
+      }
+
+      // Auto-login after successful signup
+      const loginResult = await signIn("credentials", {
+        email,
+        password,
+        redirect: false,
+      });
+
+      if (loginResult?.error) {
+        router.push("/login");
+      } else {
+        router.push("/dashboard");
+      }
+    } catch (error) {
+      setError("An error occurred. Please try again.");
+    } finally {
+      setIsLoading(false);
     }
-
-    router.push("/login");
   };
 
   const handleGoogleSignup = async () => {
-    await signIn("google", { callbackUrl: "/" });
+    await signIn("google", { callbackUrl: "/dashboard" });
   };
 
   return (
@@ -60,23 +80,27 @@ export default function SignupPage() {
           />
           <input
             type="password"
-            placeholder="Password"
+            placeholder="Password (min 6 characters)"
             className="w-full p-3 border rounded-lg"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             required
+            minLength={6}
           />
           <button
             type="submit"
-            className="w-full bg-blue-600 text-white p-3 rounded-lg hover:bg-blue-700 transition"
+            disabled={isLoading}
+            className="w-full bg-blue-600 text-white p-3 rounded-lg hover:bg-blue-700 transition disabled:opacity-50"
           >
-            Sign Up
+            {isLoading ? "Creating Account..." : "Sign Up"}
           </button>
         </form>
-        <div className="my-4 flex items-center"></div>
-        <hr className="flex-grow border-t border-gray-300" />
 
-        <hr className="flex-grow border-t border-gray-300" />
+        <div className="my-4 flex items-center">
+          <hr className="flex-grow border-t border-gray-300" />
+          <span className="mx-4 text-gray-500">OR</span>
+          <hr className="flex-grow border-t border-gray-300" />
+        </div>
 
         <button
           onClick={handleGoogleSignup}
@@ -87,9 +111,9 @@ export default function SignupPage() {
 
         <p className="mt-4 text-center text-sm text-gray-600">
           Already have an account?{" "}
-          <a href="/login" className="text-blue-600 hover:underline">
-            Login
-          </a>
+          <Link href="/login" className="text-blue-600 hover:underline">
+            Sign In
+          </Link>
         </p>
       </div>
     </div>
