@@ -1,4 +1,4 @@
-# NawaNapam.dev 💕
+# NawaNapam 💕
 
 A modern, anonymous chat platform designed to bring people together through meaningful connections. NawaNapam allows users to engage in anonymous conversations with real-time matching based on shared interests, while maintaining a safe and moderated environment.
 
