@@ -3,9 +3,47 @@
 import Link from "next/link";
 import Image from "next/image";
 import { useSession, signOut } from "next-auth/react";
+import { useEffect, useState } from "react";
 
 export default function Header() {
+  const [mounted, setMounted] = useState(false);
   const { data: session, status } = useSession();
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  if (!mounted) {
+    return (
+      <header className="fixed top-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-lg border-b border-border/40">
+        <div className="container h-16 flex items-center justify-between px-4">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-full overflow-hidden shadow-lg ring-2 ring-primary/20">
+              <Image
+                src="/logo.jpg"
+                alt="Nawa Napam Logo"
+                width={40}
+                height={40}
+                className="object-cover"
+              />
+            </div>
+            <Link href="/">
+              <span
+                className="text-xl font-bold font-playfair bg-clip-text text-transparent"
+                style={{ backgroundImage: "var(--gradient-romantic)" }}
+              >
+                Nawa Napam
+              </span>
+            </Link>
+          </div>
+          <nav className="hidden md:flex items-center gap-6">
+            <div className="w-20 h-8"></div>{" "}
+            {/* Placeholder for loading state */}
+          </nav>
+        </div>
+      </header>
+    );
+  }
 
   return (
     <header className="fixed top-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-lg border-b border-border/40">
@@ -47,10 +85,10 @@ export default function Header() {
                 Profiles
               </Link>
               <Link
-                href="/chat"
+                href="/admin"
                 className="text-sm font-medium text-muted-foreground hover:text-primary transition-colors"
               >
-                Chat
+                Admin
               </Link>
             </>
           ) : (
@@ -74,7 +112,7 @@ export default function Header() {
 
         <div className="flex items-center gap-3">
           {status === "loading" ? (
-            <div className="w-8 h-8 border-2 border-primary border-t-transparent rounded-full animate-spin"></div>
+            <div className="w-6 h-6 border-2 border-primary border-t-transparent rounded-full animate-spin"></div>
           ) : session ? (
             // Authenticated user actions
             <div className="flex items-center gap-3">
