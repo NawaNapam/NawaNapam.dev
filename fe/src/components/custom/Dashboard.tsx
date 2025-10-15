@@ -1,10 +1,20 @@
 "use client";
 
+import { useGetUser } from "@/hooks/use-getuser";
 import { signOut, useSession } from "next-auth/react";
 import Link from "next/link";
+import { useEffect } from "react";
 
 export default function Dashboard() {
   const { data: session, status } = useSession();
+
+  const user = useGetUser();
+
+  useEffect(() => {
+    if (user) {
+      console.log("User data:", user);
+    }
+  }, [user]);
 
   if (status === "loading") {
     return (
