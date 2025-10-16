@@ -12,8 +12,7 @@ export default function Home() {
         <div
           className="absolute inset-0 bg-cover bg-center bg-no-repeat scale-105 transform transition-transform duration-700 hover:scale-110"
           style={{
-            backgroundImage:
-              'url("https://images.pexels.com/photos/1024993/pexels-photo-1024993.jpeg?auto=compress&cs=tinysrgb&w=1920&h=1280&fit=crop")',
+            backgroundImage: 'url("./images/hero-romantic.webp")',
           }}
         />
 

@@ -20,7 +20,7 @@ export default function Header() {
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-full overflow-hidden shadow-lg ring-2 ring-primary/20">
               <Image
-                src="/logo.jpg"
+                src="/images/logo.jpg"
                 alt="Nawa Napam Logo"
                 width={40}
                 height={40}
@@ -51,7 +51,7 @@ export default function Header() {
         <div className="flex items-center gap-3">
           <div className="w-10 h-10 rounded-full overflow-hidden shadow-lg ring-2 ring-primary/20">
             <Image
-              src="/logo.jpg"
+              src="/images/logo.jpg"
               alt="Nawa Napam Logo"
               width={40}
               height={40}
