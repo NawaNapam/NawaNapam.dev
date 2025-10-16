@@ -17,7 +17,7 @@ export default function Home() {
         />
 
         {/* Multi-layered Gradient Overlay for Perfect Romance Feel */}
-        <div className="absolute inset-0 bg-gradient-to-br from-rose-900/90 via-pink-800/85 to-purple-900/90" />
+        <div className="absolute inset-0 bg-gradient-to-br from-rose-900/30 via-pink-800/85 to-purple-900/20" />
         <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent" />
         <div className="absolute inset-0 bg-gradient-to-r from-rose-600/20 via-transparent to-pink-600/20" />
 
@@ -82,20 +82,14 @@ export default function Home() {
                 Discover meaningful connections and find your perfect match
               </p>
               <div className="space-y-2 sm:space-y-3">
-                <p className="text-base sm:text-lg md:text-xl lg:text-2xl text-white/90 vfont leading-relaxed max-w-3xl mx-auto">
-                  Join thousands who found love in our safe, vibrant community
-                </p>
-                <p className="text-sm sm:text-base md:text-lg lg:text-xl text-white/85 vfont leading-relaxed max-w-2xl mx-auto">
-                  where authentic relationships bloom and hearts connect for
-                  life
-                </p>
+               
               </div>
             </div>
             {/* Enhanced CTA Buttons with Better Mobile Layout */}
             <div className="flex flex-col sm:flex-row gap-4 sm:gap-5 justify-center items-center mt-8 sm:mt-10">
               <Link
                 href="/signup"
-                className="group relative vfont w-full sm:w-auto px-8 sm:px-10 py-3.5 sm:py-4 bg-gradient-to-r from-rose-500 via-pink-500 to-rose-600 text-white font-semibold rounded-full hover:from-rose-600 hover:via-pink-600 hover:to-rose-700 transition-all duration-500 transform hover:scale-105 hover:shadow-2xl shadow-lg shadow-rose-500/20 min-w-[200px] sm:min-w-[220px] text-xl"
+                className="group relative vfont w-full sm:w-auto px-4 sm:px-10 py-3.5 sm:py-4 bg-gradient-to-r from-rose-500 via-pink-500 to-rose-600 text-white font-semibold rounded-full  transition-all duration-500 transform    min-w-[200px] sm:min-w-[220px] text-xl border-2 border-transparent hover:from-rose-600 hover:via-pink-600 hover:to-rose-700  shadow-lg hover:shadow-2xl flex items-center justify-center gap-2"
               >
                 <span className="relative  z-10 flex items-center justify-center gap-2">
                   <Heart
@@ -104,50 +98,23 @@ export default function Home() {
                   />
                   Start Your Journey
                 </span>
-                <div className="absolute inset-0 bg-gradient-to-r from-rose-400 via-pink-400 to-rose-500 rounded-full blur-xl opacity-60 group-hover:opacity-90 transition-opacity duration-500 scale-110" />
+                {/* <div className="absolute inset-0 bg-gradient-to-r from-rose-400 via-pink-400 to-rose-500 rounded-full blur-xl opacity-60 group-hover:opacity-90 transition-opacity duration-500 scale-110" /> */}
               </Link>
 
               <Link
                 href="/login"
-                className="group vfont text-xl relative w-full sm:w-auto px-8 sm:px-10 py-3.5 sm:py-4 bg-white/10 backdrop-blur-md text-white font-semibold rounded-full border border-white/30 hover:bg-white/20 hover:border-white/50 transition-all duration-300 hover:scale-105 min-w-[200px] sm:min-w-[220px] flex items-center justify-center gap-2  shadow-lg"
+                className="group vfont text-2xl sm:text-xl relative w-full sm:w-auto px-8 sm:px-10 py-3.5 sm:py-4 bg-white/10 backdrop-blur-md text-white font-semibold rounded-full border border-white/30 hover:bg-white/20 hover:border-white/50 transition-all duration-300  min-w-[200px] sm:min-w-[220px] flex items-center justify-center gap-2  shadow-lg hover:shadow-xl"
               >
                 <Users
                   size={18}
                   className="group-hover:scale-110 transition-transform duration-300"
                 />
                 Sign In
-                <div className="absolute inset-0 bg-white/5 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                {/* <div className="absolute inset-0 bg-white/5 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300" /> */}
               </Link>
             </div>
 
-            {/* Enhanced Stats with Better Mobile Layout */}
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-8 sm:gap-6 lg:gap-12 max-w-5xl mx-auto mt-12 sm:mt-16">
-              {[
-                { number: "50K+", label: "Happy Couples", icon: Heart },
-                { number: "1M+", label: "Active Members", icon: Users },
-                { number: "95%", label: "Success Rate", icon: Sparkles },
-              ].map((stat) => (
-                <div key={stat.label} className="text-center group relative">
-                  <div className="absolute inset-0 bg-white/5 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-                  <div className="relative">
-                    <div className="mb-4 sm:mb-5">
-                      <div className="inline-flex p-3 rounded-xl bg-white/10 backdrop-blur-sm">
-                        <stat.icon
-                          size={28}
-                          className="text-rose-300 group-hover:scale-125 transition-transform duration-500"
-                        />
-                      </div>
-                    </div>
-                    <div className="text-3xl sm:text-4xl lg:text-5xl font-bold text-white mb-2 sm:mb-3 group-hover:text-rose-200 transition-colors duration-300 font-serif">
-                      {stat.number}
-                    </div>
-                    <div className="text-white/90 text-sm sm:text-base uppercase tracking-wider font-medium">
-                      {stat.label}
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
+           
           </div>
         </div>
 
