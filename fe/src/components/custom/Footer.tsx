@@ -10,7 +10,7 @@ export default function Footer() {
             <div className="flex items-center gap-3 mb-4">
               <div className="w-10 h-10 rounded-full overflow-hidden ring-2 ring-border/5 shadow-lg">
                 <Image
-                  src="/logo.jpg"
+                  src="/images/logo.jpg"
                   alt="Nawa Napam Logo"
                   width={40}
                   height={40}
