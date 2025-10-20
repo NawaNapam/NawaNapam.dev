@@ -2,18 +2,18 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import { useSession, signOut } from "next-auth/react";
-import { useEffect, useState } from "react";
+import { signOut } from "next-auth/react";
+import { useState } from "react";
+import { useAuthStore } from "@/stores/authStore";
 
 export default function Header() {
-  const [mounted, setMounted] = useState(false);
-  const { data: session, status } = useSession();
+  const [dropdownOpen, setDropdownOpen] = useState(false);
 
-  useEffect(() => {
-    setMounted(true);
-  }, []);
+  // Use Zustand store instead of useSession
+  const { user, isAuthenticated, isLoading } = useAuthStore();
 
-  if (!mounted) {
+  // Loading state
+  if (isLoading) {
     return (
       <header className="fixed top-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-lg border-b border-border/40">
         <div className="container h-16 flex items-center justify-between px-4">
@@ -37,8 +37,7 @@ export default function Header() {
             </Link>
           </div>
           <nav className="hidden md:flex items-center gap-6">
-            <div className="w-20 h-8"></div>{" "}
-            {/* Placeholder for loading state */}
+            <div className="w-20 h-8 bg-gray-200 animate-pulse rounded"></div>
           </nav>
         </div>
       </header>
@@ -69,39 +68,16 @@ export default function Header() {
         </div>
 
         <nav className="hidden md:flex items-center gap-6">
-          {session ? (
-            // Authenticated user links
+          {!isAuthenticated && (
             <>
               <Link
-                href="/dashboard"
-                className="text-sm font-medium text-muted-foreground hover:text-primary transition-colors"
-              >
-                Dashboard
-              </Link>
-              <Link
-                href="/profiles"
-                className="text-sm font-medium text-muted-foreground hover:text-primary transition-colors"
-              >
-                Profiles
-              </Link>
-              <Link
-                href="/admin"
-                className="text-sm font-medium text-muted-foreground hover:text-primary transition-colors"
-              >
-                Admin
-              </Link>
-            </>
-          ) : (
-            // Non-authenticated user links
-            <>
-              <Link
-                href="/about"
+                href="#"
                 className="text-sm font-medium text-muted-foreground hover:text-primary transition-colors"
               >
                 About
               </Link>
               <Link
-                href="/features"
+                href="#"
                 className="text-sm font-medium text-muted-foreground hover:text-primary transition-colors"
               >
                 Features
@@ -111,37 +87,97 @@ export default function Header() {
         </nav>
 
         <div className="flex items-center gap-3">
-          {status === "loading" ? (
-            <div className="w-6 h-6 border-2 border-primary border-t-transparent rounded-full animate-spin"></div>
-          ) : session ? (
-            // Authenticated user actions
-            <div className="flex items-center gap-3">
-              <span className="hidden sm:inline text-sm text-muted-foreground">
-                Hi, {session.user?.name || session.user?.username}!
-              </span>
+          {isAuthenticated && user ? (
+            // Authenticated user - show avatar dropdown
+            <div className="relative">
               <button
-                onClick={() => signOut({ callbackUrl: "/" })}
-                className="inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring h-9 px-4 py-2 bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                type="button"
+                onClick={() => setDropdownOpen(!dropdownOpen)}
+                className="overflow-hidden rounded-full border border-gray-300 shadow-inner focus:outline-none focus:ring-2 focus:ring-primary"
               >
-                Sign Out
+                <span className="sr-only">Toggle user menu</span>
+                <Image
+                  src={
+                    user.image ||
+                    "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?q=80&w=1770&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+                  }
+                  alt="User Avatar"
+                  width={40}
+                  height={40}
+                  className="size-10 object-cover"
+                />
               </button>
+
+              {dropdownOpen && (
+                <div className="absolute right-0 z-10 mt-2 w-56 divide-y divide-gray-100 rounded-md border border-gray-100 bg-white shadow-lg">
+                  <div className="p-2">
+                    <div className="px-4 py-2 text-sm text-gray-700">
+                      <div className="font-medium">
+                        {user.name || user.username || "User"}
+                      </div>
+                      <div className="text-gray-500">{user.email}</div>
+                    </div>
+                  </div>
+                  <div className="p-2">
+                    <Link
+                      href="/dashboard"
+                      className="block rounded-lg px-4 py-2 text-sm text-gray-500 hover:bg-gray-50 hover:text-gray-700"
+                      onClick={() => setDropdownOpen(false)}
+                    >
+                      Dashboard
+                    </Link>
+                    <Link
+                      href="/settings"
+                      className="block rounded-lg px-4 py-2 text-sm text-gray-500 hover:bg-gray-50 hover:text-gray-700"
+                      onClick={() => setDropdownOpen(false)}
+                    >
+                      Settings
+                    </Link>
+                  </div>
+                  <div className="p-2">
+                    <button
+                      onClick={() => {
+                        setDropdownOpen(false);
+                        signOut({ callbackUrl: "/" });
+                      }}
+                      className="flex w-full items-center gap-2 rounded-lg px-4 py-2 text-sm text-red-700 hover:bg-red-50"
+                    >
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        strokeWidth="1.5"
+                        stroke="currentColor"
+                        className="size-4"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          d="M9 15 3 9m0 0 6-6M3 9h12a6 6 0 0 1 0 12h-3"
+                        />
+                      </svg>
+                      Logout
+                    </button>
+                  </div>
+                </div>
+              )}
             </div>
           ) : (
-            // Non-authenticated user actions
-            <>
+            // Non-authenticated user - show Login and Join now buttons
+            <div className="flex items-center gap-3">
               <Link
                 href="/login"
-                className="hidden sm:inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring h-9 px-4 py-2 hover:bg-accent hover:text-accent-foreground"
+                className="hidden sm:inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring h-9 px-4 py-2 bg-accent hover:bg-accent hover:text-accent-foreground border border-input"
               >
-                Sign In
+                Login
               </Link>
               <Link
                 href="/signup"
                 className="inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring h-9 px-4 py-2 bg-primary text-primary-foreground hover:bg-primary/90"
               >
-                Sign Up
+                Join now
               </Link>
-            </>
+            </div>
           )}
         </div>
       </div>
