@@ -11,6 +11,23 @@ const nextConfig: NextConfig = {
     // Don't run TypeScript checking during build if we have type errors
     ignoreBuildErrors: false,
   },
+  // Configure external image domains
+  images: {
+    remotePatterns: [
+      {
+        protocol: "https",
+        hostname: "images.unsplash.com",
+        port: "",
+        pathname: "/**",
+      },
+      {
+        protocol: "https",
+        hostname: "lh3.googleusercontent.com",
+        port: "",
+        pathname: "/**",
+      },
+    ],
+  },
   // Experimental features that might help with build performance
   experimental: {
     optimizePackageImports: ["@prisma/client"],

@@ -1,10 +1,13 @@
 "use client";
 import Link from "next/link";
-import { Heart, Sparkles, Users } from "lucide-react";
+import { Heart, Sparkles, Users, MessageCircle } from "lucide-react";
 import "@/styles/hero.css";
 import { WHY_CHOOSE_US } from "@/constants/hero";
+import { useAuthStore } from "@/stores/authStore";
 
 export default function Home() {
+  const { isAuthenticated, user, isLoading } = useAuthStore();
+
   return (
     <>
       <header className="relative min-h-[100svh] flex items-center justify-center overflow-hidden pt-16">
@@ -53,7 +56,9 @@ export default function Home() {
                 className="sm:w-4 sm:h-4 text-rose-300 animate-pulse group-hover:scale-110 transition-transform duration-300"
               />
               <span className="text-white/95 text-xs sm:text-sm font-medium tracking-wider">
-                Where Hearts Unite Forever
+                {isAuthenticated
+                  ? "Your Love Journey Awaits"
+                  : "Where Hearts Unite Forever"}
               </span>
               <Sparkles
                 size={14}
@@ -78,52 +83,97 @@ export default function Home() {
 
             {/* Refined Description with Better Mobile Hierarchy */}
             <div className="space-y-3 sm:space-y-4 animate-fade-in-up delay-200 max-w-4xl mx-auto">
-              <p className="text-xl sm:text-2xl md:text-3xl lg:text-4xl text-white/95 font-light vfont leading-snug tracking-wide">
-                Discover meaningful connections and find your perfect match
-              </p>
-              <div className="space-y-2 sm:space-y-3">
-               
-              </div>
+              {isAuthenticated && user ? (
+                <div className="space-y-2">
+                  <p className="text-lg sm:text-xl md:text-2xl text-white/90 font-light vfont leading-snug tracking-wide">
+                    Welcome back, {user.name || "Beautiful Soul"}!
+                  </p>
+                  <p className="text-xl sm:text-2xl md:text-3xl lg:text-4xl text-white/95 font-light vfont leading-snug tracking-wide">
+                    Your love story continues here
+                  </p>
+                </div>
+              ) : (
+                <p className="text-xl sm:text-2xl md:text-3xl lg:text-4xl text-white/95 font-light vfont leading-snug tracking-wide">
+                  Discover meaningful connections and find your perfect match
+                </p>
+              )}
+              <div className="space-y-2 sm:space-y-3"></div>
             </div>
             {/* Enhanced CTA Buttons with Better Mobile Layout */}
             <div className="flex flex-col sm:flex-row gap-4 sm:gap-5 justify-center items-center mt-8 sm:mt-10">
-              <Link
-                href="/signup"
-                className="group relative vfont w-full sm:w-auto px-4 sm:px-10 py-3.5 sm:py-4 bg-gradient-to-r from-rose-500 via-pink-500 to-rose-600 text-white font-semibold rounded-full  transition-all duration-500 transform    min-w-[200px] sm:min-w-[220px] text-xl border-2 border-transparent hover:from-rose-600 hover:via-pink-600 hover:to-rose-700  shadow-lg hover:shadow-2xl flex items-center justify-center gap-2"
-              >
-                <span className="relative  z-10 flex items-center justify-center gap-2">
-                  <Heart
-                    size={18}
-                    className="group-hover:scale-110 transition-transform duration-300"
-                  />
-                  Start Your Journey
-                </span>
-                {/* <div className="absolute inset-0 bg-gradient-to-r from-rose-400 via-pink-400 to-rose-500 rounded-full blur-xl opacity-60 group-hover:opacity-90 transition-opacity duration-500 scale-110" /> */}
-              </Link>
+              {isLoading ? (
+                // Loading state
+                <div className="flex flex-col sm:flex-row gap-4 sm:gap-5 w-full sm:w-auto items-center">
+                  <div className="w-full sm:w-[220px] h-12 sm:h-[52px] bg-white/20 backdrop-blur-md rounded-full animate-pulse"></div>
+                  <div className="w-full sm:w-[220px] h-12 sm:h-[52px] bg-white/10 backdrop-blur-md rounded-full animate-pulse"></div>
+                </div>
+              ) : isAuthenticated ? (
+                // User is logged in - show "Continue to Chat" button
+                <div className="flex flex-col sm:flex-row gap-4 items-center">
+                  <Link
+                    href="/dashboard"
+                    className="group relative vfont w-full sm:w-auto px-6 sm:px-8 py-4 sm:py-3 bg-gradient-to-r from-rose-500 via-pink-500 to-rose-600 text-white font-semibold rounded-full transition-all duration-500 transform min-w-[250px] sm:min-w-[280px] text-xl border-2 border-transparent hover:from-rose-600 hover:via-pink-600 hover:to-rose-700 shadow-xl hover:shadow-2xl  flex items-center justify-center gap-3"
+                  >
+                    <span className="relative z-10 flex items-center justify-center gap-3">
+                      <MessageCircle
+                        size={20}
+                        className="group-hover:scale-110 transition-transform duration-300"
+                      />
+                      Continue to Chat
+                    </span>
+                    {/* <div className="absolute inset-0 bg-gradient-to-r from-rose-400 via-pink-400 to-rose-500 rounded-full blur-xl opacity-60 group-hover:opacity-90 transition-opacity duration-500 scale-110" /> */}
+                  </Link>
 
-              <Link
-                href="/login"
-                className="group vfont text-2xl sm:text-xl relative w-full sm:w-auto px-8 sm:px-10 py-3.5 sm:py-4 bg-white/10 backdrop-blur-md text-white font-semibold rounded-full border border-white/30 hover:bg-white/20 hover:border-white/50 transition-all duration-300  min-w-[200px] sm:min-w-[220px] flex items-center justify-center gap-2  shadow-lg hover:shadow-xl"
-              >
-                <Users
-                  size={18}
-                  className="group-hover:scale-110 transition-transform duration-300"
-                />
-                Sign In
-                {/* <div className="absolute inset-0 bg-white/5 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300" /> */}
-              </Link>
+                  {/* Optional secondary action for logged-in users */}
+                  <Link
+                    href="/settings"
+                    className="group vfont text-lg sm:text-base relative w-full sm:w-auto px-6 sm:px-8 py-3 sm:py-3.5 bg-white/10 backdrop-blur-md text-white font-medium rounded-full border border-white/30 hover:bg-white/20 hover:border-white/50 transition-all duration-300 min-w-[180px] sm:min-w-[160px] flex items-center justify-center gap-2 shadow-lg hover:shadow-xl"
+                  >
+                    <Users
+                      size={16}
+                      className="group-hover:scale-110 transition-transform duration-300"
+                    />
+                    Profile
+                  </Link>
+                </div>
+              ) : (
+                // User is not logged in - show "Start Journey" and "Sign In" buttons
+                <>
+                  <Link
+                    href="/signup"
+                    className="group relative vfont w-full sm:w-auto px-4 sm:px-10 py-3.5 sm:py-4 bg-gradient-to-r from-rose-500 via-pink-500 to-rose-600 text-white font-semibold rounded-full transition-all duration-500 transform min-w-[200px] sm:min-w-[220px] text-xl border-2 border-transparent hover:from-rose-600 hover:via-pink-600 hover:to-rose-700 shadow-lg hover:shadow-2xl flex items-center justify-center gap-2"
+                  >
+                    <span className="relative z-10 flex items-center justify-center gap-2">
+                      <Heart
+                        size={18}
+                        className="group-hover:scale-110 transition-transform duration-300"
+                      />
+                      Start Your Journey
+                    </span>
+                  </Link>
+
+                  <Link
+                    href="/login"
+                    className="group vfont text-2xl sm:text-xl relative w-full sm:w-auto px-8 sm:px-10 py-3.5 sm:py-4 bg-white/10 backdrop-blur-md text-white font-semibold rounded-full border border-white/30 hover:bg-white/20 hover:border-white/50 transition-all duration-300 min-w-[200px] sm:min-w-[220px] flex items-center justify-center gap-2 shadow-lg hover:shadow-xl"
+                  >
+                    <Users
+                      size={18}
+                      className="group-hover:scale-110 transition-transform duration-300"
+                    />
+                    Sign In
+                  </Link>
+                </>
+              )}
             </div>
-
-           
           </div>
         </div>
 
         {/* Enhanced Scroll Indicator */}
-        <div className="absolute bottom-8 sm:bottom-10 lg:bottom-12 left-1/2 transform -translate-x-1/2 animate-bounce">
+        {/* <div className="absolute bottom-8 sm:bottom-10 lg:bottom-12 left-1/2 transform -translate-x-1/2 animate-bounce">
           <div className="w-6 sm:w-7 h-10 sm:h-12 border-2 border-white/40 rounded-full flex justify-center shadow-lg backdrop-blur-sm">
             <div className="w-1 sm:w-1.5 h-3 sm:h-4 bg-gradient-to-b from-rose-300 to-pink-300 rounded-full mt-2 animate-pulse" />
           </div>
-        </div>
+        </div> */}
       </header>
 
       <section className="py-16 sm:py-20 lg:py-24 bg-gradient-to-b from-rose-50 via-pink-25 to-white relative overflow-hidden">
