@@ -90,7 +90,7 @@ export default function UpdateProfileForm() {
     if (formData.image !== (session?.user?.image || "")) updateData.image = formData.image;
 
     if (Object.keys(updateData).length === 0) {
-      toast("No changes to save", { icon: "ℹ️" });
+      // toast("No changes to save", { icon: "ℹ️" });
       return;
     }
 
@@ -98,7 +98,7 @@ export default function UpdateProfileForm() {
     if (result) {
       setFormData((prev) => ({ ...prev, password: "" }));
       setValidationErrors({});
-      toast.success("Profile updated!");
+      // toast.success("Profile updated!");
     }
   };
 
@@ -172,7 +172,7 @@ export default function UpdateProfileForm() {
         <div className="flex justify-center mb-8">
           <div className="relative group">
             <Avatar className="w-28 h-28 ring-4 ring-cyan-400/30 shadow-xl">
-              <AvatarImage src={formData.image || session?.user?.image} />
+              <AvatarImage src={formData.image ?? session?.user?.image ?? undefined} />
               <AvatarFallback className="bg-gradient-to-br from-cyan-500 to-blue-600 text-white text-2xl">
                 {(session?.user?.name || "U").charAt(0).toUpperCase()}
               </AvatarFallback>
