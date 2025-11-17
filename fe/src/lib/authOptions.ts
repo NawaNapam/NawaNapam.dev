@@ -1,4 +1,5 @@
 import GoogleProvider from "next-auth/providers/google";
+import InstagramProvider from "next-auth/providers/instagram";
 import CredentialsProvider from "next-auth/providers/credentials";
 import bcrypt from "bcryptjs";
 import { PrismaAdapter } from "@next-auth/prisma-adapter";
@@ -13,6 +14,10 @@ export const authOptions: NextAuthOptions = {
     GoogleProvider({
       clientId: googleEnv.CLIENT_ID!,
       clientSecret: googleEnv.CLIENT_SECRET!,
+    }),
+    InstagramProvider({
+      clientId: process.env.INSTAGRAM_CLIENT_ID,
+      clientSecret: process.env.INSTAGRAM_CLIENT_SECRET,
     }),
 
     CredentialsProvider({

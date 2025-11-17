@@ -1,229 +1,171 @@
 "use client";
-import Link from "next/link";
-import { Heart, Sparkles, Users, MessageCircle } from "lucide-react";
-import "@/styles/hero.css";
-import { WHY_CHOOSE_US } from "@/constants/hero";
-import { useAuthStore } from "@/stores/authStore";
 
-export default function Home() {
+import Link from "next/link";
+import { Video, Zap, Users, Globe, Sparkles, Shield, EyeOff } from "lucide-react";
+import { useAuthStore } from "@/stores/authStore";
+import { useEffect, useState } from "react";
+
+export default function HeroSection() {
   const { isAuthenticated, user, isLoading } = useAuthStore();
+  const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
+
+  useEffect(() => {
+    const move = (e: MouseEvent) => setMousePos({ x: e.clientX, y: e.clientY });
+    window.addEventListener("mousemove", move);
+    return () => window.removeEventListener("mousemove", move);
+  }, []);
 
   return (
     <>
-      <header className="relative min-h-[100svh] flex items-center justify-center overflow-hidden pt-16">
-        {/* Enhanced Romantic Background with Couple Silhouette */}
-        <div
-          className="absolute inset-0 bg-cover bg-center bg-no-repeat scale-105 transform transition-transform duration-700 hover:scale-110"
-          style={{
-            backgroundImage: 'url("./images/hero-romantic.webp")',
-          }}
-        />
-
-        {/* Multi-layered Gradient Overlay for Perfect Romance Feel */}
-        <div className="absolute inset-0 bg-gradient-to-br from-rose-900/30 via-pink-800/85 to-purple-900/20" />
-        <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent" />
-        <div className="absolute inset-0 bg-gradient-to-r from-rose-600/20 via-transparent to-pink-600/20" />
-
-        {/* Enhanced Floating Hearts and Sparkles Animation */}
-        <div className="absolute inset-0 overflow-hidden pointer-events-none">
-          <div className="absolute top-16 left-8 md:top-20 md:left-16 text-rose-300/40 animate-pulse">
-            <Heart size={24} className="md:w-8 md:h-8" />
-          </div>
-          <div className="absolute top-32 right-12 md:top-40 md:right-20 text-pink-300/35 animate-pulse delay-1000">
-            <Sparkles size={20} className="md:w-7 md:h-7" />
-          </div>
-          <div className="absolute bottom-40 left-12 md:bottom-48 md:left-20 text-rose-300/30 animate-pulse delay-500">
-            <Heart size={18} className="md:w-6 md:h-6" />
-          </div>
-          <div className="absolute top-48 right-1/4 md:top-60 md:right-1/3 text-pink-300/25 animate-pulse delay-700">
-            <Sparkles size={16} className="md:w-5 md:h-5" />
-          </div>
-          <div className="absolute bottom-28 right-16 md:bottom-32 md:right-24 text-rose-300/35 animate-pulse delay-300">
-            <Heart size={20} className="md:w-6 md:h-6" />
-          </div>
-          <div className="absolute top-36 left-1/4 md:top-44 md:left-1/3 text-pink-300/30 animate-pulse delay-1200">
-            <Sparkles size={18} className="md:w-5 md:h-5" />
-          </div>
+      {/* HERO SECTION */}
+      <section className="relative min-h-screen flex items-center justify-center overflow-hidden pt-16">
+        {/* Animated Background */}
+        <div className="absolute inset-0 opacity-40 pointer-events-none">
+          <div
+            className="absolute w-96 h-96 bg-cyan-500 rounded-full blur-3xl -top-48 -left-48 animate-pulse"
+            style={{ transform: `translate(${mousePos.x * 0.02}px, ${mousePos.y * 0.02}px)` }}
+          />
+          <div
+            className="absolute w-80 h-80 bg-purple-600 rounded-full blur-3xl -bottom-40 -right-40 animate-pulse delay-700"
+            style={{ transform: `translate(${mousePos.x * -0.015}px, ${mousePos.y * -0.015}px)` }}
+          />
         </div>
 
-        {/* Main Content with Enhanced Typography */}
-        <div className="relative z-10 container mx-auto px-4 sm:px-6 lg:px-8 text-center py-6 sm:py-10 lg:py-12">
-          <div className="max-w-6xl mx-auto space-y-6 sm:space-y-8 lg:space-y-10">
-            {/* Elegant Subtitle Badge */}
-            <div className="inline-flex items-center gap-2 sm:gap-3 bg-gradient-to-r from-white/10 to-white/20 backdrop-blur-md rounded-full px-4 sm:px-6 lg:px-8 py-2 sm:py-2.5 border border-white/20 shadow-xl hover:border-white/30 transition-all duration-300 group">
-              <Heart
-                size={14}
-                className="sm:w-4 sm:h-4 text-rose-300 animate-pulse group-hover:scale-110 transition-transform duration-300"
-              />
-              <span className="text-white/95 text-xs sm:text-sm font-medium tracking-wider">
-                {isAuthenticated
-                  ? "Your Love Journey Awaits"
-                  : "Where Hearts Unite Forever"}
+        {/* Floating Sparkles */}
+        <div className="absolute inset-0 pointer-events-none">
+          {[...Array(6)].map((_, i) => (
+            <Sparkles
+              key={i}
+              size={16}
+              className="absolute text-cyan-400/30 animate-float"
+              style={{
+                top: `${20 + i * 15}%`,
+                left: i % 2 === 0 ? "10%" : "75%",
+                animationDelay: `${i * 0.5}s`,
+              }}
+            />
+          ))}
+        </div>
+
+        {/* Main Content */}
+        <div className="relative z-10 container mx-auto px-4 sm:px-6 lg:px-8 text-center py-8">
+          <div className="max-w-5xl mx-auto space-y-8">
+
+            {/* Badge */}
+            <div className="inline-flex items-center gap-2 bg-white/10 backdrop-blur-lg border border-white/20 rounded-full px-5 py-2 text-xs sm:text-sm font-medium text-cyan-200 tracking-wider">
+              <Zap size={14} className="animate-pulse" />
+              <span>Instant • Anonymous • Global</span>
+              <Globe size={14} className="animate-pulse delay-300" />
+            </div>
+
+            {/* Heading */}
+            <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold text-white leading-tight">
+              Meet Strangers
+            </h1>
+            <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-light text-cyan-200 tracking-wide">
+              <span className="bg-gradient-to-r from-cyan-400 to-blue-300 bg-clip-text text-transparent">
+                In One Click
               </span>
-              <Sparkles
-                size={14}
-                className="sm:w-4 sm:h-4 text-rose-300 animate-pulse delay-500 group-hover:scale-110 transition-transform duration-300"
-              />
-            </div>
+            </h2>
 
-            {/* Enhanced Main Heading with Better Font Hierarchy */}
-            <div className="animate-fade-in-up space-y-2 sm:space-y-3">
-              <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-light text-white leading-tight tracking-wide font-serif">
-                Welcome to
-              </h1>
-              <h2 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl 2xl:text-9xl font-bold leading-tight lg:leading-none font-serif">
-                <span className="relative inline-block">
-                  <span className="absolute inset-0 bg-gradient-to-r from-rose-400/20 via-pink-400/20 to-rose-400/20 blur-3xl transform scale-150 animate-pulse"></span>
-                  <span className="vfont font-semibold relative bg-gradient-to-r from-rose-200 via-pink-100 to-rose-200 bg-clip-text text-transparent drop-shadow-2xl tracking-tight">
-                    Nawa Napam
-                  </span>
-                </span>
-              </h2>
-            </div>
+            {/* Description */}
+            <p className="max-w-2xl mx-auto text-lg sm:text-xl text-gray-300 leading-relaxed font-light">
+              Skip the small talk. Jump into real-time video chats with people around the world. Just{" "}
+              <span className="text-cyan-300 font-medium">you and them</span>.
+            </p>
 
-            {/* Refined Description with Better Mobile Hierarchy */}
-            <div className="space-y-3 sm:space-y-4 animate-fade-in-up delay-200 max-w-4xl mx-auto">
-              {isAuthenticated && user ? (
-                <div className="space-y-2">
-                  <p className="text-lg sm:text-xl md:text-2xl text-white/90 font-light vfont leading-snug tracking-wide">
-                    Welcome back, {user.name || "Beautiful Soul"}!
-                  </p>
-                  <p className="text-xl sm:text-2xl md:text-3xl lg:text-4xl text-white/95 font-light vfont leading-snug tracking-wide">
-                    Your love story continues here
-                  </p>
-                </div>
-              ) : (
-                <p className="text-xl sm:text-2xl md:text-3xl lg:text-4xl text-white/95 font-light vfont leading-snug tracking-wide">
-                  Discover meaningful connections and find your perfect match
-                </p>
-              )}
-              <div className="space-y-2 sm:space-y-3"></div>
-            </div>
-            {/* Enhanced CTA Buttons with Better Mobile Layout */}
-            <div className="flex flex-col sm:flex-row gap-4 sm:gap-5 justify-center items-center mt-8 sm:mt-10">
+            {/* CTA */}
+            <div className="flex flex-col sm:flex-row gap-4 justify-center items-center mt-10">
               {isLoading ? (
-                // Loading state
-                <div className="flex flex-col sm:flex-row gap-4 sm:gap-5 w-full sm:w-auto items-center">
-                  <div className="w-full sm:w-[220px] h-12 sm:h-[52px] bg-white/20 backdrop-blur-md rounded-full animate-pulse"></div>
-                  <div className="w-full sm:w-[220px] h-12 sm:h-[52px] bg-white/10 backdrop-blur-md rounded-full animate-pulse"></div>
-                </div>
+                <div className="w-full sm:w-64 h-14 bg-white/20 backdrop-blur-md rounded-2xl animate-pulse" />
               ) : isAuthenticated ? (
-                // User is logged in - show "Continue to Chat" button
-                <div className="flex flex-col sm:flex-row gap-4 items-center">
-                  <Link
-                    href="/dashboard"
-                    className="group relative vfont w-full sm:w-auto px-6 sm:px-8 py-4 sm:py-3 bg-gradient-to-r from-rose-500 via-pink-500 to-rose-600 text-white font-semibold rounded-full transition-all duration-500 transform min-w-[250px] sm:min-w-[280px] text-xl border-2 border-transparent hover:from-rose-600 hover:via-pink-600 hover:to-rose-700 shadow-xl hover:shadow-2xl  flex items-center justify-center gap-3"
-                  >
-                    <span className="relative z-10 flex items-center justify-center gap-3">
-                      <MessageCircle
-                        size={20}
-                        className="group-hover:scale-110 transition-transform duration-300"
-                      />
-                      Continue to Chat
-                    </span>
-                    {/* <div className="absolute inset-0 bg-gradient-to-r from-rose-400 via-pink-400 to-rose-500 rounded-full blur-xl opacity-60 group-hover:opacity-90 transition-opacity duration-500 scale-110" /> */}
-                  </Link>
-
-                  {/* Optional secondary action for logged-in users */}
-                  <Link
-                    href="/settings"
-                    className="group vfont text-lg sm:text-base relative w-full sm:w-auto px-6 sm:px-8 py-3 sm:py-3.5 bg-white/10 backdrop-blur-md text-white font-medium rounded-full border border-white/30 hover:bg-white/20 hover:border-white/50 transition-all duration-300 min-w-[180px] sm:min-w-[160px] flex items-center justify-center gap-2 shadow-lg hover:shadow-xl"
-                  >
-                    <Users
-                      size={16}
-                      className="group-hover:scale-110 transition-transform duration-300"
-                    />
-                    Profile
-                  </Link>
-                </div>
-              ) : (
-                // User is not logged in - show "Start Journey" and "Sign In" buttons
                 <>
                   <Link
-                    href="/signup"
-                    className="group relative vfont w-full sm:w-auto px-4 sm:px-10 py-3.5 sm:py-4 bg-gradient-to-r from-rose-500 via-pink-500 to-rose-600 text-white font-semibold rounded-full transition-all duration-500 transform min-w-[200px] sm:min-w-[220px] text-xl border-2 border-transparent hover:from-rose-600 hover:via-pink-600 hover:to-rose-700 shadow-lg hover:shadow-2xl flex items-center justify-center gap-2"
+                    href="/chat"
+                    className="group w-full sm:w-auto px-8 py-4 bg-gradient-to-r from-cyan-500 to-blue-600 text-white font-semibold text-lg rounded-2xl transition-all hover:scale-105 hover:shadow-2xl flex items-center justify-center gap-3 shadow-xl"
                   >
-                    <span className="relative z-10 flex items-center justify-center gap-2">
-                      <Heart
-                        size={18}
-                        className="group-hover:scale-110 transition-transform duration-300"
-                      />
-                      Start Your Journey
-                    </span>
+                    <Video size={22} className="group-hover:rotate-12 transition-transform" />
+                    Start Video Chat
+                    <Zap size={18} className="group-hover:scale-110 transition-transform" />
                   </Link>
-
+                  <Link
+                    href="/dashboard"
+                    className="w-full sm:w-auto px-8 py-3.5 bg-white/10 backdrop-blur-md border border-white/30 text-white font-medium rounded-2xl hover:bg-white/20 transition-all flex items-center justify-center gap-2"
+                  >
+                    <Users size={18} />
+                    Dashboard
+                  </Link>
+                </>
+              ) : (
+                <>
+                  <Link
+                    href="/chat"
+                    className="group w-full sm:w-auto px-10 py-4 bg-gradient-to-r from-cyan-500 to-blue-600 text-white font-bold text-xl rounded-2xl transition-all hover:scale-105 hover:shadow-2xl flex items-center justify-center gap-3 shadow-xl"
+                  >
+                    <Video size={24} className="group-hover:rotate-12 transition-transform" />
+                    Start Chatting Now
+                    <Zap size={20} className="group-hover:scale-110 transition-transform" />
+                  </Link>
                   <Link
                     href="/login"
-                    className="group vfont text-2xl sm:text-xl relative w-full sm:w-auto px-8 sm:px-10 py-3.5 sm:py-4 bg-white/10 backdrop-blur-md text-white font-semibold rounded-full border border-white/30 hover:bg-white/20 hover:border-white/50 transition-all duration-300 min-w-[200px] sm:min-w-[220px] flex items-center justify-center gap-2 shadow-lg hover:shadow-xl"
+                    className="w-full sm:w-auto px-8 py-4 bg-white/10 backdrop-blur-md border border-white/30 text-white font-medium rounded-2xl hover:bg-white/20 hover:border-white/40 transition-all flex items-center justify-center gap-2"
                   >
-                    <Users
-                      size={18}
-                      className="group-hover:scale-110 transition-transform duration-300"
-                    />
+                    <Users size={20} />
                     Sign In
                   </Link>
                 </>
               )}
             </div>
+
+            {/* Trust Indicators */}
+            <div className="flex flex-wrap justify-center gap-6 mt-12 text-gray-400 text-sm">
+              <div className="flex items-center gap-2"><Globe size={16} /><span>190+ Countries</span></div>
+              <div className="flex items-center gap-2"><Users size={16} /><span>Live Now: <span className="text-cyan-300 font-medium">12.4K</span></span></div>
+              <div className="flex items-center gap-2"><Zap size={16} /><span>&lt; 3s Connect</span></div>
+            </div>
           </div>
         </div>
 
-        {/* Enhanced Scroll Indicator */}
-        {/* <div className="absolute bottom-8 sm:bottom-10 lg:bottom-12 left-1/2 transform -translate-x-1/2 animate-bounce">
-          <div className="w-6 sm:w-7 h-10 sm:h-12 border-2 border-white/40 rounded-full flex justify-center shadow-lg backdrop-blur-sm">
-            <div className="w-1 sm:w-1.5 h-3 sm:h-4 bg-gradient-to-b from-rose-300 to-pink-300 rounded-full mt-2 animate-pulse" />
-          </div>
-        </div> */}
-      </header>
-
-      <section className="py-16 sm:py-20 lg:py-24 bg-gradient-to-b from-rose-50 via-pink-25 to-white relative overflow-hidden">
-        {/* Background Pattern */}
-        <div className="absolute inset-0 opacity-5">
-          <div className="absolute top-10 left-10 text-rose-300">
-            <Heart size={32} className="sm:w-10 sm:h-10" />
-          </div>
-          <div className="absolute bottom-20 right-16 text-pink-300">
-            <Sparkles size={28} className="sm:w-8 sm:h-8" />
+        {/* Scroll Hint */}
+        <div className="absolute bottom-8 left-1/2 -translate-x-1/2 animate-bounce">
+          <div className="w-6 h-10 border-2 border-cyan-400/50 rounded-full flex justify-center">
+            <div className="w-1 h-3 bg-cyan-400 rounded-full mt-2 animate-pulse" />
           </div>
         </div>
+      </section>
 
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-          <div className="text-center mb-12 sm:mb-16 lg:mb-20">
-            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-800 mb-4 sm:mb-6 leading-tight font-serif">
+      {/* WHY CHOOSE US */}
+      <section className="py-16 sm:py-20 lg:py-24 bg-gradient-to-b from-transparent via-slate-900/50 to-slate-900">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-12 sm:mb-16">
+            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-white mb-6">
               Why Choose{" "}
-              <span className="bg-gradient-to-r vfont from-rose-600 to-pink-600 bg-clip-text text-transparent">
-                Nawa Napam?
+              <span className="bg-gradient-to-r from-cyan-400 to-blue-400 bg-clip-text text-transparent">
+                Us?
               </span>
             </h2>
-            <p className="text-gray-600 text-base sm:text-lg lg:text-xl max-w-3xl mx-auto leading-relaxed">
-              Experience love like never before with our innovative features
-              designed for meaningful connections
+            <p className="text-gray-400 text-base sm:text-lg max-w-3xl mx-auto">
+              Simple, fast, and built for real spontaneous conversations.
             </p>
           </div>
 
-          <div className="flex flex-wrap justify-center max-w-7xl mx-auto px-4 sm:px-6">
-            {WHY_CHOOSE_US.map((feature) => (
+          <div className="grid gap-6 md:gap-8 md:grid-cols-2 lg:grid-cols-4 max-w-7xl mx-auto">
+            {WHY_CHOOSE_US.map((f, i) => (
               <article
-                key={feature.title}
-                className="group w-full sm:w-[calc(50%-1rem)] lg:w-[calc(33.333%-1.5rem)] p-3 sm:p-4"
+                key={f.title}
+                className="group bg-white/5 backdrop-blur-xl rounded-2xl p-6 shadow-lg hover:shadow-2xl transition-all duration-300 hover:-translate-y-1 border border-cyan-500/20"
+                style={{ animationDelay: `${i * 100}ms` }}
               >
-                <div className="h-full bg-white/95 backdrop-blur-sm rounded-xl sm:rounded-2xl p-6 sm:p-8 shadow-xl hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-1 sm:hover:-translate-y-2 border border-gray-100/80 hover:border-rose-200/80 relative overflow-hidden">
-                  {/* Background Gradient */}
-                  <div className="absolute inset-0 bg-gradient-to-br from-rose-50/50 to-pink-50/50 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-
-                  <div className="relative z-10 flex flex-col min-h-[180px] sm:min-h-[200px]">
-                    <div
-                      className={`inline-flex p-3 sm:p-4 rounded-lg sm:rounded-xl bg-gradient-to-r ${feature.gradient} text-white mb-4 sm:mb-6 shadow-lg group-hover:scale-110 transition-transform duration-500 self-start`}
-                    >
-                      <feature.icon size={20} className="sm:w-6 sm:h-6" />
-                    </div>
-                    <h3 className="font-bold text-lg sm:text-xl text-gray-800 mb-3 sm:mb-4 group-hover:text-rose-600 transition-colors duration-300 font-serif">
-                      {feature.title}
-                    </h3>
-                    <p className="text-gray-600 leading-relaxed text-sm sm:text-base group-hover:text-gray-700 transition-colors duration-300 flex-grow">
-                      {feature.desc}
-                    </p>
+                <div className="flex flex-col items-start space-y-4">
+                  <div
+                    className={`p-3 rounded-xl bg-gradient-to-r ${f.gradient} text-white shadow-md group-hover:scale-110 transition-transform duration-300`}
+                  >
+                    <f.icon size={24} />
                   </div>
+                  <h3 className="font-semibold text-lg text-gray-200 group-hover:text-cyan-300 transition-colors">
+                    {f.title}
+                  </h3>
+                  <p className="text-gray-400 text-sm leading-relaxed">{f.desc}</p>
                 </div>
               </article>
             ))}
@@ -233,3 +175,31 @@ export default function Home() {
     </>
   );
 }
+
+/* WHY CHOOSE US DATA */
+const WHY_CHOOSE_US = [
+  {
+    title: "100% Anonymous",
+    desc: "No names, no profiles, no trace. Just you and the moment.",
+    icon: EyeOff,
+    gradient: "from-cyan-500 to-blue-600",
+  },
+  {
+    title: "Instant Match",
+    desc: "Connected in under 3 seconds – no waiting, no queues.",
+    icon: Zap,
+    gradient: "from-emerald-500 to-teal-600",
+  },
+  {
+    title: "Global Reach",
+    desc: "Chat with anyone, anytime, anywhere.",
+    icon: Globe,
+    gradient: "from-purple-500 to-indigo-600",
+  },
+  {
+    title: "End-to-End Encrypted",
+    desc: "Your video & audio are protected at all times.",
+    icon: Shield,
+    gradient: "from-rose-500 to-pink-600",
+  },
+];
