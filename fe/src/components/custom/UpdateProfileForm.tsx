@@ -14,13 +14,12 @@ import {
   Mail,
   Lock,
   Image as ImageIcon,
-  UserCheck,
-  Heart,
-  Sparkles,
+  Globe,
   ArrowLeft,
+  Sparkles,
+  CheckCircle,
 } from "lucide-react";
 import Link from "next/link";
-import "@/styles/hero.css";
 
 export default function UpdateProfileForm() {
   const { data: session } = useSession();
@@ -34,11 +33,9 @@ export default function UpdateProfileForm() {
     image: "",
   });
 
-  const [validationErrors, setValidationErrors] = useState<{
-    [key: string]: string;
-  }>({});
+  const [validationErrors, setValidationErrors] = useState<{ [key: string]: string }>({});
 
-  // Initialize form data when session loads
+  // Initialize form
   useEffect(() => {
     if (session?.user) {
       setFormData({
@@ -54,40 +51,27 @@ export default function UpdateProfileForm() {
   const validateForm = () => {
     const errors: { [key: string]: string } = {};
 
-    // Name validation
     if (formData.name.trim() && formData.name.trim().length < 2) {
       errors.name = "Name must be at least 2 characters";
     }
 
-    // Username validation
     if (formData.username && formData.username !== session?.user?.username) {
-      if (formData.username.length < 3) {
-        errors.username = "Username must be at least 3 characters";
-      } else if (formData.username.length > 20) {
-        errors.username = "Username must be less than 20 characters";
-      } else if (!/^[a-zA-Z0-9_-]+$/.test(formData.username)) {
-        errors.username =
-          "Username can only contain letters, numbers, underscores, and hyphens";
-      }
+      if (formData.username.length < 3) errors.username = "Min 3 characters";
+      else if (formData.username.length > 20) errors.username = "Max 20 characters";
+      else if (!/^[a-zA-Z0-9_-]+$/.test(formData.username))
+        errors.username = "Only letters, numbers, _, -";
     }
 
-    // Email validation
     if (formData.email && !/\S+@\S+\.\S+/.test(formData.email)) {
-      errors.email = "Please enter a valid email address";
+      errors.email = "Invalid email";
     }
 
-    // Password validation
     if (formData.password && formData.password.length < 6) {
-      errors.password = "Password must be at least 6 characters";
+      errors.password = "Min 6 characters";
     }
 
-    // Image URL validation
     if (formData.image && formData.image.trim()) {
-      try {
-        new URL(formData.image);
-      } catch {
-        errors.image = "Please enter a valid URL";
-      }
+      try { new URL(formData.image); } catch { errors.image = "Invalid URL"; }
     }
 
     setValidationErrors(errors);
@@ -96,309 +80,239 @@ export default function UpdateProfileForm() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!validateForm()) return;
 
-    if (!validateForm()) {
-      return;
-    }
-
-    // Only send fields that have changed
     const updateData: Record<string, string> = {};
-    if (formData.name.trim() !== (session?.user?.name || "")) {
-      updateData.name = formData.name.trim();
-    }
-    if (formData.username !== (session?.user?.username || "")) {
-      updateData.username = formData.username;
-    }
-    if (formData.email !== (session?.user?.email || "")) {
-      updateData.email = formData.email;
-    }
-    if (formData.password) {
-      updateData.password = formData.password;
-    }
-    if (formData.image !== (session?.user?.image || "")) {
-      updateData.image = formData.image;
-    }
+    if (formData.name.trim() !== (session?.user?.name || "")) updateData.name = formData.name.trim();
+    if (formData.username !== (session?.user?.username || "")) updateData.username = formData.username;
+    if (formData.email !== (session?.user?.email || "")) updateData.email = formData.email;
+    if (formData.password) updateData.password = formData.password;
+    if (formData.image !== (session?.user?.image || "")) updateData.image = formData.image;
 
     if (Object.keys(updateData).length === 0) {
-      setValidationErrors({ general: "No changes detected" });
+      // toast("No changes to save", { icon: "ℹ️" });
       return;
     }
 
     const result = await updateUser(updateData);
     if (result) {
-      // Clear password field and validation errors after successful update
       setFormData((prev) => ({ ...prev, password: "" }));
       setValidationErrors({});
+      // toast.success("Profile updated!");
     }
   };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
-
-    // Clear validation error for this field when user starts typing
     if (validationErrors[name]) {
-      setValidationErrors((prev) => ({
-        ...prev,
-        [name]: "",
-      }));
-    }
-
-    // Clear general error when user makes changes
-    if (validationErrors.general) {
-      setValidationErrors((prev) => ({
-        ...prev,
-        general: "",
-      }));
+      setValidationErrors((prev) => ({ ...prev, [name]: "" }));
     }
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-rose-900/90 via-pink-800/85 to-purple-900/90 relative overflow-hidden">
-      {/* Enhanced Background Elements */}
-      <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute top-16 left-8 text-rose-300/30 animate-pulse">
-          <Heart size={24} />
-        </div>
-        <div className="absolute top-32 right-12 text-pink-300/25 animate-pulse delay-1000">
-          <Sparkles size={20} />
-        </div>
-        <div className="absolute bottom-40 left-12 text-rose-300/20 animate-pulse delay-500">
-          <Heart size={18} />
-        </div>
-        <div className="absolute top-48 right-1/4 text-pink-300/15 animate-pulse delay-700">
-          <Sparkles size={16} />
-        </div>
-        <div className="absolute bottom-28 right-16 text-rose-300/25 animate-pulse delay-300">
-          <Heart size={20} />
-        </div>
+    <div className="relative min-h-screen flex flex-col items-center justify-center p-4 overflow-hidden bg-gradient-to-br from-slate-900 via-blue-900 to-indigo-900">
+      {/* Animated Background */}
+      <div className="absolute inset-0 opacity-30">
+        <div className="absolute w-96 h-96 bg-cyan-500 rounded-full blur-3xl -top-48 -left-48 animate-pulse" />
+        <div className="absolute w-80 h-80 bg-purple-600 rounded-full blur-3xl -bottom-40 -right-40 animate-pulse delay-700" />
       </div>
 
-      <div className="flex items-center justify-center min-h-screen p-4 relative z-10">
-        <Card className="bg-white/95 backdrop-blur-sm p-8 rounded-2xl shadow-xl border-0 w-full max-w-lg">
-          {/* Header with Back Button */}
-          <div className="flex items-center gap-4 mb-8">
-            <Link
-              href="/dashboard"
-              className="p-2 hover:bg-gray-100 rounded-full transition-colors"
-            >
-              <ArrowLeft className="w-5 h-5 text-gray-600" />
-            </Link>
-            <div className="flex-1 text-center">
-              <h1 className="text-3xl font-bold text-gray-900 mb-2 vfont">
+      {/* Floating Sparkles */}
+      <div className="absolute inset-0 pointer-events-none">
+        {[...Array(6)].map((_, i) => (
+          <Sparkles
+            key={i}
+            size={16}
+            className="absolute text-cyan-400/30 animate-float"
+            style={{
+              top: `${15 + i * 14}%`,
+              left: i % 2 === 0 ? "10%" : "70%",
+              animationDelay: `${i * 0.4}s`,
+            }}
+          />
+        ))}
+      </div>
+
+      {/* Top Bar: Back + Time */}
+      <div className="absolute top-6 left-6 right-6 flex justify-between items-center z-20">
+        <div className="flex gap-3">
+          <Link
+            href="/dashboard"
+            className="group flex items-center gap-2 text-cyan-300 hover:text-cyan-200 text-sm font-medium transition-colors"
+          >
+            <ArrowLeft size={16} className="group-hover:-translate-x-1 transition-transform" />
+            Dashboard
+          </Link>
+          {/* <span className="text-cyan-400/50">|</span>
+          <Link
+            href="/"
+            className="group flex items-center gap-2 text-cyan-300 hover:text-cyan-200 text-sm font-medium transition-colors"
+          >
+            <ArrowLeft size={16} className="group-hover:-translate-x-1 transition-transform" />
+            Home
+          </Link> */}
+        </div>
+        {/* <div className="flex items-center gap-1.5 text-cyan-300 text-xs">
+          <Globe size={14} />
+          <span className="font-mono">{currentTime}</span>
+        </div> */}
+      </div>
+
+      {/* Profile Card */}
+      <Card className="relative z-10 w-full max-w-lg bg-white/80 backdrop-blur-xl border border-cyan-500/20 rounded-2xl shadow-2xl p-8 mt-16">
+        <div className="text-center mb-8">
+          <h1 className="text-3xl font-bold bg-gradient-to-r from-cyan-600 to-blue-600 bg-clip-text text-transparent">
+            Update Profile
+          </h1>
+          <p className="text-sm text-gray-500 mt-2">Keep your info fresh</p>
+        </div>
+
+        {/* Avatar */}
+        <div className="flex justify-center mb-8">
+          <div className="relative group">
+            <Avatar className="w-28 h-28 ring-4 ring-cyan-400/30 shadow-xl">
+              <AvatarImage src={formData.image ?? session?.user?.image ?? undefined} />
+              <AvatarFallback className="bg-gradient-to-br from-cyan-500 to-blue-600 text-white text-2xl">
+                {(session?.user?.name || "U").charAt(0).toUpperCase()}
+              </AvatarFallback>
+            </Avatar>
+            <div className="absolute -bottom-1 -right-1 w-9 h-9 bg-gradient-to-r from-cyan-500 to-blue-600 rounded-full flex items-center justify-center shadow-lg">
+              <ImageIcon size={16} className="text-white" />
+            </div>
+          </div>
+        </div>
+
+        <form onSubmit={handleSubmit} className="space-y-5">
+          {/* Name */}
+          <div className="relative">
+            <User className="absolute left-3 top-3 w-5 h-5 text-cyan-500" />
+            <Input
+              id="name"
+              name="name"
+              type="text"
+              value={formData.name}
+              onChange={handleChange}
+              placeholder="Full Name"
+              className={`pl-10 h-12 bg-white/50 border-cyan-200 focus:border-cyan-500 focus:ring-cyan-500/20 ${
+                validationErrors.name ? "border-red-400" : ""
+              }`}
+            />
+            {validationErrors.name && (
+              <p className="text-xs text-red-400 mt-1 pl-10">{validationErrors.name}</p>
+            )}
+          </div>
+
+          {/* Username */}
+          <div className="relative">
+            <User className="absolute left-3 top-3 w-5 h-5 text-cyan-500" />
+            <Input
+              id="username"
+              name="username"
+              type="text"
+              value={formData.username}
+              onChange={handleChange}
+              placeholder="Username"
+              className={`pl-10 h-12 bg-white/50 border-cyan-200 focus:border-cyan-500 focus:ring-cyan-500/20 ${
+                validationErrors.username ? "border-red-400" : ""
+              }`}
+            />
+            {validationErrors.username && (
+              <p className="text-xs text-red-400 mt-1 pl-10">{validationErrors.username}</p>
+            )}
+          </div>
+
+          {/* Email */}
+          <div className="relative">
+            <Mail className="absolute left-3 top-3 w-5 h-5 text-cyan-500" />
+            <Input
+              id="email"
+              name="email"
+              type="email"
+              value={formData.email}
+              onChange={handleChange}
+              placeholder="you@example.com"
+              className={`pl-10 h-12 bg-white/50 border-cyan-200 focus:border-cyan-500 focus:ring-cyan-500/20 ${
+                validationErrors.email ? "border-red-400" : ""
+              }`}
+            />
+            {validationErrors.email && (
+              <p className="text-xs text-red-400 mt-1 pl-10">{validationErrors.email}</p>
+            )}
+          </div>
+
+          {/* Password */}
+          <div className="relative">
+            <Lock className="absolute left-3 top-3 w-5 h-5 text-cyan-500" />
+            <Input
+              id="password"
+              name="password"
+              type="password"
+              value={formData.password}
+              onChange={handleChange}
+              placeholder="New password (optional)"
+              className={`pl-10 h-12 bg-white/50 border-cyan-200 focus:border-cyan-500 focus:ring-cyan-500/20 ${
+                validationErrors.password ? "border-red-400" : ""
+              }`}
+            />
+            {validationErrors.password && (
+              <p className="text-xs text-red-400 mt-1 pl-10">{validationErrors.password}</p>
+            )}
+          </div>
+
+          {/* Image URL */}
+          <div className="relative">
+            <ImageIcon className="absolute left-3 top-3 w-5 h-5 text-cyan-500" />
+            <Input
+              id="image"
+              name="image"
+              type="url"
+              value={formData.image}
+              onChange={handleChange}
+              placeholder="https://example.com/avatar.jpg"
+              className={`pl-10 h-12 bg-white/50 border-cyan-200 focus:border-cyan-500 focus:ring-cyan-500/20 ${
+                validationErrors.image ? "border-red-400" : ""
+              }`}
+            />
+            {validationErrors.image && (
+              <p className="text-xs text-red-400 mt-1 pl-10">{validationErrors.image}</p>
+            )}
+          </div>
+
+          {/* Server Error */}
+          {error && (
+            <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg text-sm flex items-center gap-2">
+              <div className="w-2 h-2 bg-red-500 rounded-full"></div>
+              {error}
+            </div>
+          )}
+
+          {/* Submit */}
+          <Button
+            type="submit"
+            disabled={isLoading}
+            className="w-full h-12 bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-600 hover:to-blue-700 text-white font-semibold rounded-xl shadow-lg hover:shadow-cyan-500/30 transition-all disabled:opacity-60"
+          >
+            {isLoading ? (
+              <>
+                <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin mr-2"></div>
+                Updating...
+              </>
+            ) : (
+              <>
+                <CheckCircle size={18} className="mr-2" />
                 Update Profile
-              </h1>
-              <p className="text-gray-600 text-sm">
-                Manage your account information
-              </p>
-            </div>
-          </div>
-
-          {/* Avatar Section */}
-          <div className="flex justify-center mb-8">
-            <div className="relative">
-              <Avatar className="w-24 h-24 ring-4 ring-rose-100 shadow-lg">
-                <AvatarImage
-                  src={formData.image || session?.user?.image || ""}
-                />
-                <AvatarFallback className="bg-gradient-to-br from-rose-400 to-pink-500 text-white text-2xl">
-                  <User className="w-12 h-12" />
-                </AvatarFallback>
-              </Avatar>
-              <div className="absolute -bottom-2 -right-2 w-8 h-8 bg-gradient-to-r from-rose-500 to-pink-500 rounded-full flex items-center justify-center shadow-lg">
-                <UserCheck className="w-4 h-4 text-white" />
-              </div>
-            </div>
-          </div>
-
-          <form onSubmit={handleSubmit} className="space-y-6">
-            <div className="space-y-2">
-              <Label
-                htmlFor="name"
-                className="text-sm font-medium text-gray-700 flex items-center gap-2"
-              >
-                <User className="w-4 h-4 text-rose-500" />
-                Full Name
-              </Label>
-              <Input
-                id="name"
-                name="name"
-                type="text"
-                value={formData.name}
-                onChange={handleChange}
-                placeholder="Enter your full name"
-                className={`w-full h-11 px-4 rounded-lg border-gray-200 focus:border-rose-500 focus:ring-rose-500/20 transition-colors ${
-                  validationErrors.name
-                    ? "border-red-500 focus:border-red-500 focus:ring-red-500/20"
-                    : ""
-                }`}
-              />
-              {validationErrors.name && (
-                <p className="text-sm text-red-600 mt-1 flex items-center gap-1">
-                  <span className="w-1 h-1 bg-red-500 rounded-full"></span>
-                  {validationErrors.name}
-                </p>
-              )}
-            </div>
-
-            <div className="space-y-2">
-              <Label
-                htmlFor="username"
-                className="text-sm font-medium text-gray-700 flex items-center gap-2"
-              >
-                <UserCheck className="w-4 h-4 text-rose-500" />
-                Username
-              </Label>
-              <Input
-                id="username"
-                name="username"
-                type="text"
-                value={formData.username}
-                onChange={handleChange}
-                placeholder="Choose a unique username"
-                className={`w-full h-11 px-4 rounded-lg border-gray-200 focus:border-rose-500 focus:ring-rose-500/20 transition-colors ${
-                  validationErrors.username
-                    ? "border-red-500 focus:border-red-500 focus:ring-red-500/20"
-                    : ""
-                }`}
-              />
-              {validationErrors.username && (
-                <p className="text-sm text-red-600 mt-1 flex items-center gap-1">
-                  <span className="w-1 h-1 bg-red-500 rounded-full"></span>
-                  {validationErrors.username}
-                </p>
-              )}
-            </div>
-
-            <div className="space-y-2">
-              <Label
-                htmlFor="email"
-                className="text-sm font-medium text-gray-700 flex items-center gap-2"
-              >
-                <Mail className="w-4 h-4 text-rose-500" />
-                Email Address
-              </Label>
-              <Input
-                id="email"
-                name="email"
-                type="email"
-                value={formData.email}
-                onChange={handleChange}
-                placeholder="your.email@example.com"
-                className={`w-full h-11 px-4 rounded-lg border-gray-200 focus:border-rose-500 focus:ring-rose-500/20 transition-colors ${
-                  validationErrors.email
-                    ? "border-red-500 focus:border-red-500 focus:ring-red-500/20"
-                    : ""
-                }`}
-              />
-              {validationErrors.email && (
-                <p className="text-sm text-red-600 mt-1 flex items-center gap-1">
-                  <span className="w-1 h-1 bg-red-500 rounded-full"></span>
-                  {validationErrors.email}
-                </p>
-              )}
-            </div>
-
-            <div className="space-y-2">
-              <Label
-                htmlFor="password"
-                className="text-sm font-medium text-gray-700 flex items-center gap-2"
-              >
-                <Lock className="w-4 h-4 text-rose-500" />
-                New Password
-              </Label>
-              <Input
-                id="password"
-                name="password"
-                type="password"
-                value={formData.password}
-                onChange={handleChange}
-                placeholder="Leave blank to keep current password"
-                className={`w-full h-11 px-4 rounded-lg border-gray-200 focus:border-rose-500 focus:ring-rose-500/20 transition-colors ${
-                  validationErrors.password
-                    ? "border-red-500 focus:border-red-500 focus:ring-red-500/20"
-                    : ""
-                }`}
-              />
-              {validationErrors.password && (
-                <p className="text-sm text-red-600 mt-1 flex items-center gap-1">
-                  <span className="w-1 h-1 bg-red-500 rounded-full"></span>
-                  {validationErrors.password}
-                </p>
-              )}
-            </div>
-
-            <div className="space-y-2">
-              <Label
-                htmlFor="image"
-                className="text-sm font-medium text-gray-700 flex items-center gap-2"
-              >
-                <ImageIcon className="w-4 h-4 text-rose-500" />
-                Profile Image URL
-              </Label>
-              <Input
-                id="image"
-                name="image"
-                type="url"
-                value={formData.image}
-                onChange={handleChange}
-                placeholder="https://example.com/your-image.jpg"
-                className={`w-full h-11 px-4 rounded-lg border-gray-200 focus:border-rose-500 focus:ring-rose-500/20 transition-colors ${
-                  validationErrors.image
-                    ? "border-red-500 focus:border-red-500 focus:ring-red-500/20"
-                    : ""
-                }`}
-              />
-              {validationErrors.image && (
-                <p className="text-sm text-red-600 mt-1 flex items-center gap-1">
-                  <span className="w-1 h-1 bg-red-500 rounded-full"></span>
-                  {validationErrors.image}
-                </p>
-              )}
-            </div>
-
-            {/* Error Messages */}
-            {validationErrors.general && (
-              <div className="bg-amber-50 border border-amber-200 text-amber-800 px-4 py-3 rounded-lg flex items-center gap-2">
-                <div className="w-2 h-2 bg-amber-500 rounded-full flex-shrink-0"></div>
-                {validationErrors.general}
-              </div>
+              </>
             )}
+          </Button>
+        </form>
 
-            {error && (
-              <div className="bg-red-50 border border-red-200 text-red-800 px-4 py-3 rounded-lg flex items-center gap-2">
-                <div className="w-2 h-2 bg-red-500 rounded-full flex-shrink-0"></div>
-                {error}
-              </div>
-            )}
+        <p className="mt-6 text-center text-xs text-gray-500">
+          Your data is encrypted and secure
+        </p>
+      </Card>
 
-            <Button
-              type="submit"
-              disabled={isLoading}
-              className="w-full h-12 bg-gradient-to-r from-rose-600 to-pink-600 hover:from-rose-700 hover:to-pink-700 text-white font-medium rounded-lg shadow-md hover:shadow-lg transition-all duration-200 disabled:opacity-60 disabled:cursor-not-allowed vfont text-lg"
-            >
-              {isLoading ? (
-                <div className="flex items-center justify-center gap-2">
-                  <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
-                  Updating Profile...
-                </div>
-              ) : (
-                "Update Profile"
-              )}
-            </Button>
-          </form>
-
-          {/* Footer Message */}
-          <div className="mt-6 text-center">
-            <p className="text-sm text-gray-600">
-              Your information is secure and will only be used to improve your
-              experience
-            </p>
-          </div>
-
-          <Toaster />
-        </Card>
-      </div>
+      <Toaster position="top-center" />
     </div>
   );
 }
