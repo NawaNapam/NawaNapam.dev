@@ -6,7 +6,6 @@ import { useUpdateUser } from "@/hooks/use-update-user";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { Label } from "@/components/ui/label";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Toaster } from "@/components/ui/sonner";
 import {
@@ -34,8 +33,22 @@ export default function UpdateProfileForm() {
   });
 
   const [validationErrors, setValidationErrors] = useState<{ [key: string]: string }>({});
+  const [currentTime, setCurrentTime] = useState("");
 
-  // Initialize form
+  // Live IST Time
+  useEffect(() => {
+    const update = () => {
+      const now = new Date();
+      setCurrentTime(
+        now.toLocaleTimeString("en-IN", { hour: "2-digit", minute: "2-digit", hour12: true }) + " IST"
+      );
+    };
+    update();
+    const int = setInterval(update, 1000);
+    return () => clearInterval(int);
+  }, []);
+
+  // Initialize form with session data
   useEffect(() => {
     if (session?.user) {
       setFormData({
@@ -51,9 +64,8 @@ export default function UpdateProfileForm() {
   const validateForm = () => {
     const errors: { [key: string]: string } = {};
 
-    if (formData.name.trim() && formData.name.trim().length < 2) {
+    if (formData.name.trim() && formData.name.trim().length < 2)
       errors.name = "Name must be at least 2 characters";
-    }
 
     if (formData.username && formData.username !== session?.user?.username) {
       if (formData.username.length < 3) errors.username = "Min 3 characters";
@@ -62,13 +74,11 @@ export default function UpdateProfileForm() {
         errors.username = "Only letters, numbers, _, -";
     }
 
-    if (formData.email && !/\S+@\S+\.\S+/.test(formData.email)) {
+    if (formData.email && !/\S+@\S+\.\S+/.test(formData.email))
       errors.email = "Invalid email";
-    }
 
-    if (formData.password && formData.password.length < 6) {
+    if (formData.password && formData.password.length < 6)
       errors.password = "Min 6 characters";
-    }
 
     if (formData.image && formData.image.trim()) {
       try { new URL(formData.image); } catch { errors.image = "Invalid URL"; }
@@ -90,229 +100,205 @@ export default function UpdateProfileForm() {
     if (formData.image !== (session?.user?.image || "")) updateData.image = formData.image;
 
     if (Object.keys(updateData).length === 0) {
-      // toast("No changes to save", { icon: "ℹ️" });
+      // toast("No changes made", { icon: "Info" });
       return;
     }
 
     const result = await updateUser(updateData);
     if (result) {
-      setFormData((prev) => ({ ...prev, password: "" }));
+      setFormData(prev => ({ ...prev, password: "" }));
       setValidationErrors({});
-      // toast.success("Profile updated!");
+      // toast.success("Profile updated successfully!");
     }
   };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
+    setFormData(prev => ({ ...prev, [name]: value }));
     if (validationErrors[name]) {
-      setValidationErrors((prev) => ({ ...prev, [name]: "" }));
+      setValidationErrors(prev => ({ ...prev, [name]: "" }));
     }
   };
 
   return (
-    <div className="relative min-h-screen flex flex-col items-center justify-center p-4 overflow-hidden bg-gradient-to-br from-slate-900 via-blue-900 to-indigo-900">
-      {/* Animated Background */}
-      <div className="absolute inset-0 opacity-30">
-        <div className="absolute w-96 h-96 bg-cyan-500 rounded-full blur-3xl -top-48 -left-48 animate-pulse" />
-        <div className="absolute w-80 h-80 bg-purple-600 rounded-full blur-3xl -bottom-40 -right-40 animate-pulse delay-700" />
+    <div className="relative min-h-screen flex items-center justify-center p-4 overflow-hidden bg-gradient-to-br from-[#0a140a] via-[#0f1a0f] to-[#0a140a]">
+      {/* Golden Animated Blobs */}
+      <div className="absolute inset-0 opacity-30 pointer-events-none">
+        <div className="absolute w-96 h-96 bg-amber-600/40 rounded-full blur-3xl -top-48 -left-48 animate-pulse" />
+        <div className="absolute w-80 h-80 bg-emerald-700/40 rounded-full blur-3xl -bottom-40 -right-40 animate-pulse delay-700" />
       </div>
 
-      {/* Floating Sparkles */}
+      {/* Floating Golden Sparkles */}
       <div className="absolute inset-0 pointer-events-none">
         {[...Array(6)].map((_, i) => (
           <Sparkles
             key={i}
-            size={16}
-            className="absolute text-cyan-400/30 animate-float"
+            size={18}
+            className="absolute text-amber-400/30 animate-float"
             style={{
               top: `${15 + i * 14}%`,
-              left: i % 2 === 0 ? "10%" : "70%",
-              animationDelay: `${i * 0.4}s`,
+              left: i % 2 === 0 ? "8%" : "78%",
+              animationDelay: `${i * 0.6}s`,
             }}
           />
         ))}
       </div>
 
-      {/* Top Bar: Back + Time */}
+      {/* Top Bar */}
       <div className="absolute top-6 left-6 right-6 flex justify-between items-center z-20">
-        <div className="flex gap-3">
-          <Link
-            href="/dashboard"
-            className="group flex items-center gap-2 text-cyan-300 hover:text-cyan-200 text-sm font-medium transition-colors"
-          >
-            <ArrowLeft size={16} className="group-hover:-translate-x-1 transition-transform" />
-            Dashboard
-          </Link>
-          {/* <span className="text-cyan-400/50">|</span>
-          <Link
-            href="/"
-            className="group flex items-center gap-2 text-cyan-300 hover:text-cyan-200 text-sm font-medium transition-colors"
-          >
-            <ArrowLeft size={16} className="group-hover:-translate-x-1 transition-transform" />
-            Home
-          </Link> */}
+        <Link
+          href="/dashboard"
+          className="group flex items-center gap-2 text-amber-200 hover:text-amber-100 text-sm font-medium transition-all"
+        >
+          <ArrowLeft size={16} className="group-hover:-translate-x-1 transition-transform" />
+          Back to Dashboard
+        </Link>
+        <div className="flex items-center gap-2 text-amber-200 text-xs font-medium">
+          <Globe size={14} className="text-amber-400" />
+          <span className="font-mono tracking-wider">{currentTime}</span>
         </div>
-        {/* <div className="flex items-center gap-1.5 text-cyan-300 text-xs">
-          <Globe size={14} />
-          <span className="font-mono">{currentTime}</span>
-        </div> */}
       </div>
 
-      {/* Profile Card */}
-      <Card className="relative z-10 w-full max-w-lg bg-white/80 backdrop-blur-xl border border-cyan-500/20 rounded-2xl shadow-2xl p-8 mt-16">
-        <div className="text-center mb-8">
-          <h1 className="text-3xl font-bold bg-gradient-to-r from-cyan-600 to-blue-600 bg-clip-text text-transparent">
-            Update Profile
+      {/* Profile Update Card */}
+      <Card className="relative z-10 w-full max-w-lg bg-white/8 backdrop-blur-2xl border border-amber-500/30 rounded-3xl shadow-2xl shadow-amber-500/20 p-10">
+        <div className="text-center mb-10">
+          <h1
+            className="text-4xl font-black tracking-tight"
+            style={{ fontFamily: "var(--font-cinzel), serif" }}
+          >
+            <span className="bg-gradient-to-r from-amber-400 via-yellow-500 to-amber-300 bg-clip-text text-transparent">
+              Update Profile
+            </span>
           </h1>
-          <p className="text-sm text-gray-500 mt-2">Keep your info fresh</p>
+          <p className="text-amber-100/70 text-sm mt-3">Keep your presence vibrant and true</p>
         </div>
 
         {/* Avatar */}
-        <div className="flex justify-center mb-8">
+        <div className="flex justify-center mb-10">
           <div className="relative group">
-            <Avatar className="w-28 h-28 ring-4 ring-cyan-400/30 shadow-xl">
+            <Avatar className="w-32 h-32 ring-4 ring-amber-500/40 shadow-2xl">
               <AvatarImage src={formData.image ?? session?.user?.image ?? undefined} />
-              <AvatarFallback className="bg-gradient-to-br from-cyan-500 to-blue-600 text-white text-2xl">
+              <AvatarFallback className="bg-gradient-to-br from-amber-500 to-yellow-600 text-black text-3xl font-bold">
                 {(session?.user?.name || "U").charAt(0).toUpperCase()}
               </AvatarFallback>
             </Avatar>
-            <div className="absolute -bottom-1 -right-1 w-9 h-9 bg-gradient-to-r from-cyan-500 to-blue-600 rounded-full flex items-center justify-center shadow-lg">
-              <ImageIcon size={16} className="text-white" />
+            <div className="absolute bottom-0 right-0 w-10 h-10 bg-gradient-to-r from-amber-500 to-yellow-600 rounded-full flex items-center justify-center shadow-xl border-4 border-black/20">
+              <ImageIcon size={18} className="text-black" />
             </div>
           </div>
         </div>
 
-        <form onSubmit={handleSubmit} className="space-y-5">
+        <form onSubmit={handleSubmit} className="space-y-6">
           {/* Name */}
           <div className="relative">
-            <User className="absolute left-3 top-3 w-5 h-5 text-cyan-500" />
+            <User className="absolute left-3 top-3.5 w-5 h-5 text-amber-400" />
             <Input
-              id="name"
               name="name"
               type="text"
               value={formData.name}
               onChange={handleChange}
               placeholder="Full Name"
-              className={`pl-10 h-12 bg-white/50 border-cyan-200 focus:border-cyan-500 focus:ring-cyan-500/20 ${
-                validationErrors.name ? "border-red-400" : ""
+              className={`pl-11 h-12 bg-white/10 border-amber-500/30 text-amber-50 placeholder-amber-200/50 focus:border-amber-400 focus:ring-amber-400/20 rounded-xl ${
+                validationErrors.name ? "border-red-500/50" : ""
               }`}
             />
-            {validationErrors.name && (
-              <p className="text-xs text-red-400 mt-1 pl-10">{validationErrors.name}</p>
-            )}
+            {validationErrors.name && <p className="text-xs text-red-400 mt-1 pl-11">{validationErrors.name}</p>}
           </div>
 
           {/* Username */}
           <div className="relative">
-            <User className="absolute left-3 top-3 w-5 h-5 text-cyan-500" />
+            <User className="absolute left-3 top-3.5 w-5 h-5 text-amber-400" />
             <Input
-              id="username"
               name="username"
               type="text"
               value={formData.username}
               onChange={handleChange}
               placeholder="Username"
-              className={`pl-10 h-12 bg-white/50 border-cyan-200 focus:border-cyan-500 focus:ring-cyan-500/20 ${
-                validationErrors.username ? "border-red-400" : ""
+              className={`pl-11 h-12 bg-white/10 border-amber-500/30 text-amber-50 placeholder-amber-200/50 focus:border-amber-400 focus:ring-amber-400/20 rounded-xl ${
+                validationErrors.username ? "border-red-500/50" : ""
               }`}
             />
-            {validationErrors.username && (
-              <p className="text-xs text-red-400 mt-1 pl-10">{validationErrors.username}</p>
-            )}
+            {validationErrors.username && <p className="text-xs text-red-400 mt-1 pl-11">{validationErrors.username}</p>}
           </div>
 
           {/* Email */}
           <div className="relative">
-            <Mail className="absolute left-3 top-3 w-5 h-5 text-cyan-500" />
+            <Mail className="absolute left-3 top-3.5 w-5 h-5 text-amber-400" />
             <Input
-              id="email"
               name="email"
               type="email"
               value={formData.email}
               onChange={handleChange}
               placeholder="you@example.com"
-              className={`pl-10 h-12 bg-white/50 border-cyan-200 focus:border-cyan-500 focus:ring-cyan-500/20 ${
-                validationErrors.email ? "border-red-400" : ""
+              className={`pl-11 h-12 bg-white/10 border-amber-500/30 text-amber-50 placeholder-amber-200/50 focus:border-amber-400 focus:ring-amber-400/20 rounded-xl ${
+                validationErrors.email ? "border-red-500/50" : ""
               }`}
             />
-            {validationErrors.email && (
-              <p className="text-xs text-red-400 mt-1 pl-10">{validationErrors.email}</p>
-            )}
+            {validationErrors.email && <p className="text-xs text-red-400 mt-1 pl-11">{validationErrors.email}</p>}
           </div>
 
           {/* Password */}
           <div className="relative">
-            <Lock className="absolute left-3 top-3 w-5 h-5 text-cyan-500" />
+            <Lock className="absolute left-3 top-3.5 w-5 h-5 text-amber-400" />
             <Input
-              id="password"
               name="password"
               type="password"
               value={formData.password}
               onChange={handleChange}
-              placeholder="New password (optional)"
-              className={`pl-10 h-12 bg-white/50 border-cyan-200 focus:border-cyan-500 focus:ring-cyan-500/20 ${
-                validationErrors.password ? "border-red-400" : ""
+              placeholder="New password (leave blank to keep)"
+              className={`pl-11 h-12 bg-white/10 border-amber-500/30 text-amber-50 placeholder-amber-200/50 focus:border-amber-400 focus:ring-amber-400/20 rounded-xl ${
+                validationErrors.password ? "border-red-500/50" : ""
               }`}
             />
-            {validationErrors.password && (
-              <p className="text-xs text-red-400 mt-1 pl-10">{validationErrors.password}</p>
-            )}
+            {validationErrors.password && <p className="text-xs text-red-400 mt-1 pl-11">{validationErrors.password}</p>}
           </div>
 
           {/* Image URL */}
           <div className="relative">
-            <ImageIcon className="absolute left-3 top-3 w-5 h-5 text-cyan-500" />
+            <ImageIcon className="absolute left-3 top-3.5 w-5 h-5 text-amber-400" />
             <Input
-              id="image"
               name="image"
               type="url"
               value={formData.image}
               onChange={handleChange}
               placeholder="https://example.com/avatar.jpg"
-              className={`pl-10 h-12 bg-white/50 border-cyan-200 focus:border-cyan-500 focus:ring-cyan-500/20 ${
-                validationErrors.image ? "border-red-400" : ""
+              className={`pl-11 h-12 bg-white/10 border-amber-500/30 text-amber-50 placeholder-amber-200/50 focus:border-amber-400 focus:ring-amber-400/20 rounded-xl ${
+                validationErrors.image ? "border-red-500/50" : ""
               }`}
             />
-            {validationErrors.image && (
-              <p className="text-xs text-red-400 mt-1 pl-10">{validationErrors.image}</p>
-            )}
+            {validationErrors.image && <p className="text-xs text-red-400 mt-1 pl-11">{validationErrors.image}</p>}
           </div>
 
           {/* Server Error */}
           {error && (
-            <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg text-sm flex items-center gap-2">
-              <div className="w-2 h-2 bg-red-500 rounded-full"></div>
+            <div className="bg-red-500/10 border border-red-500/30 text-amber-100 px-4 py-3 rounded-xl text-sm flex items-center gap-2">
               {error}
             </div>
           )}
 
-          {/* Submit */}
+          {/* Submit Button */}
           <Button
             type="submit"
             disabled={isLoading}
-            className="w-full h-12 bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-600 hover:to-blue-700 text-white font-semibold rounded-xl shadow-lg hover:shadow-cyan-500/30 transition-all disabled:opacity-60"
+            className="w-full h-14 bg-gradient-to-r from-amber-500 to-yellow-600 hover:from-amber-300 hover:to-yellow-700 text-black font-bold text-lg rounded-2xl shadow-xl transition-all disabled:opacity-60"
           >
             {isLoading ? (
-              <>
-                <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin mr-2"></div>
-                Updating...
-              </>
+              <>Updating Profile...</>
             ) : (
               <>
-                <CheckCircle size={18} className="mr-2" />
-                Update Profile
+                <CheckCircle size={20} className="mr-2" />
+                Save Changes
               </>
             )}
           </Button>
         </form>
 
-        <p className="mt-6 text-center text-xs text-gray-500">
-          Your data is encrypted and secure
+        <p className="mt-8 text-center text-xs text-amber-200/60 font-medium">
+          Your data is encrypted • Secure • Private
         </p>
       </Card>
 
-      <Toaster position="top-center" />
+      <Toaster position="top-center" theme="dark" />
     </div>
   );
 }
