@@ -6,7 +6,7 @@ import Footer from "@/components/custom/Footer";
 
 export default function Landing() {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-indigo-900">
+    <div className="min-h-screen bg-gradient-to-br from-[#0f1a0f] via-[#1a2d1a] to-[#0f1a0f]">
       <Header />
       <HeroSection />
       <Footer />

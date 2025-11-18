@@ -1,55 +1,58 @@
 import Image from "next/image";
 import Link from "next/link";
-import { ArrowUp, Instagram, Twitter, MessageCircle, Globe } from "lucide-react";
-import { useEffect, useState } from "react";
+import { ArrowUp, Instagram, Twitter, MessageCircle, Globe, Heart } from "lucide-react";
 
 export default function Footer() {
-  const [currentTime, setCurrentTime] = useState("");
-
-  useEffect(() => {
-    const updateTime = () => {
-      const now = new Date();
-      const time = now.toLocaleTimeString("en-IN", { hour: "2-digit", minute: "2-digit", hour12: true });
-      const date = now.toLocaleDateString("en-IN", { weekday: "short", month: "short", day: "numeric" });
-      setCurrentTime(`${date}, ${time} IST`);
-    };
-    updateTime();
-    const interval = setInterval(updateTime, 1000);
-    return () => clearInterval(interval);
-  }, []);
+  const currentYear = new Date().getFullYear();
 
   return (
-    <footer className="relative bg-gradient-to-b from-slate-900/50 via-slate-900/80 to-slate-900 backdrop-blur-xl border-t border-cyan-500/10">
-      <div className="container px-4 sm:px-6 py-12 sm:py-16">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-8 lg:gap-12">
+    <footer className="relative bg-gradient-to-t from-black via-[#0f1a0f]/95 to-[#0f1a0f]/90 backdrop-blur-2xl border-t border-amber-500/20 overflow-hidden">
+      {/* Subtle Golden Glow Line */}
+      <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-amber-500/40 to-transparent" />
 
-          {/* Brand */}
+      <div className="container px-4 sm:px-6 py-16 sm:py-20">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-10 lg:gap-16">
+
+          {/* Brand Section */}
           <div className="md:col-span-1">
-            <div className="flex items-center gap-3 mb-4">
-              <div className="w-10 h-10 rounded-full overflow-hidden ring-2 ring-cyan-400/30 shadow-lg">
-                <Image src="/images/logo.jpg" alt="Logo" width={40} height={40} className="object-cover" />
+            <div className="flex items-center gap-4 mb-6">
+              <div className="w-12 h-12 rounded-full overflow-hidden ring-4 ring-amber-500/30 shadow-2xl shadow-amber-500/20">
+                <Image
+                  src="/images/logo.jpg"
+                  alt="Nawa Napam"
+                  width={48}
+                  height={48}
+                  className="object-cover"
+                />
               </div>
-              <h4 className="text-xl font-bold bg-gradient-to-r from-cyan-400 to-blue-400 bg-clip-text text-transparent tracking-tight">
-                Nawa Napam
+              <h4
+                className="text-2xl font-black tracking-tight"
+                style={{ fontFamily: "var(--font-cinzel), serif" }}
+              >
+                <span className="bg-gradient-to-r from-amber-400 via-yellow-500 to-amber-300 bg-clip-text text-transparent">
+                  Nawa Napam
+                </span>
               </h4>
             </div>
-            <p className="text-sm text-gray-400 leading-relaxed">
-              Connect instantly with strangers worldwide. Anonymous, encrypted, and real-time — just one click away.
+            <p className="text-sm text-amber-100/70 leading-relaxed max-w-xs">
+              Connecting souls across Bharat and beyond — instantly, anonymously, and with respect.
             </p>
-            <div className="flex items-center gap-1.5 mt-4 text-xs text-cyan-300">
-              <Globe size={14} />
-              <span className="font-mono">{currentTime}</span>
-            </div>
+            <p className="text-xs text-amber-200/60 mt-4 font-medium">
+              Rooted in culture. Built for the world.
+            </p>
           </div>
 
           {/* Explore */}
-          <nav className="space-y-3">
-            <h5 className="text-sm font-semibold text-gray-300 uppercase tracking-wider">Explore</h5>
-            <ul className="space-y-2">
-              {["Safety", "Features", "Help Center", "Blog"].map((item) => (
+          <nav className="space-y-4">
+            <h5 className="text-xs font-bold text-amber-400 uppercase tracking-widest">Explore</h5>
+            <ul className="space-y-3">
+              {["Safety First", "How It Works", "Our Story", "Blog"].map((item) => (
                 <li key={item}>
-                  <Link href={`#${item.toLowerCase().replace(" ", "-")}`} className="text-sm text-gray-400 hover:text-cyan-300 transition-colors flex items-center gap-1 group">
-                    <span className="group-hover:translate-x-1 transition-transform">→</span>
+                  <Link
+                    href="#"
+                    className="text-sm text-amber-100/70 hover:text-amber-300 transition-all flex items-center gap-2 group"
+                  >
+                    <span className="text-amber-500 group-hover:translate-x-2 transition-transform text-xs">→</span>
                     {item}
                   </Link>
                 </li>
@@ -58,13 +61,16 @@ export default function Footer() {
           </nav>
 
           {/* Legal */}
-          <nav className="space-y-3">
-            <h5 className="text-sm font-semibold text-gray-300 uppercase tracking-wider">Legal</h5>
-            <ul className="space-y-2">
-              {["Privacy Policy", "Terms of Service", "Cookie Policy", "Community Rules"].map((item) => (
+          <nav className="space-y-4">
+            <h5 className="text-xs font-bold text-amber-400 uppercase tracking-widest">Legal</h5>
+            <ul className="space-y-3">
+              {["Privacy Policy", "Terms of Service", "Community Guidelines", "Data Safety"].map((item) => (
                 <li key={item}>
-                  <Link href={`/${item.toLowerCase().replace(/\s+/g, "-")}`} className="text-sm text-gray-400 hover:text-cyan-300 transition-colors flex items-center gap-1 group">
-                    <span className="group-hover:translate-x-1 transition-transform">→</span>
+                  <Link
+                    href="#"
+                    className="text-sm text-amber-100/70 hover:text-amber-300 transition-all flex items-center gap-2 group"
+                  >
+                    <span className="text-amber-500 group-hover:translate-x-2 transition-transform text-xs">→</span>
                     {item}
                   </Link>
                 </li>
@@ -72,45 +78,65 @@ export default function Footer() {
             </ul>
           </nav>
 
-          {/* Social */}
+          {/* Connect & Back to Top */}
           <div className="flex flex-col justify-between">
             <div>
-              <h5 className="text-sm font-semibold text-gray-300 uppercase tracking-wider mb-3">Connect</h5>
-              <div className="flex gap-3">
-                <a href="https://instagram.com" target="_blank" rel="noopener" className="w-9 h-9 rounded-lg bg-white/5 backdrop-blur-sm border border-cyan-500/20 flex items-center justify-center text-cyan-300 hover:bg-cyan-500/10 hover:border-cyan-400 transition-all">
-                  <Instagram size={16} />
+              <h5 className="text-xs font-bold text-amber-400 uppercase tracking-widest mb-5">Connect With Us</h5>
+              <div className="flex gap-4">
+                <a
+                  href="https://instagram.com"
+                  target="_blank"
+                  rel="noopener"
+                  className="w-11 h-11 rounded-xl bg-amber-500/10 border border-amber-500/30 flex items-center justify-center text-amber-300 hover:bg-amber-500/20 hover:border-amber-400 hover:scale-110 transition-all shadow-lg"
+                >
+                  <Instagram size={18} />
                 </a>
-                <a href="https://x.com" target="_blank" rel="noopener" className="w-9 h-9 rounded-lg bg-white/5 backdrop-blur-sm border border-cyan-500/20 flex items-center justify-center text-cyan-300 hover:bg-cyan-500/10 hover:border-cyan-400 transition-all">
-                  <Twitter size={16} />
+                <a
+                  href="https://x.com"
+                  target="_blank"
+                  rel="noopener"
+                  className="w-11 h-11 rounded-xl bg-amber-500/10 border border-amber-500/30 flex items-center justify-center text-amber-300 hover:bg-amber-500/20 hover:border-amber-400 hover:scale-110 transition-all shadow-lg"
+                >
+                  <Twitter size={18} />
                 </a>
-                <a href="https://discord.gg" target="_blank" rel="noopener" className="w-9 h-9 rounded-lg bg-white/5 backdrop-blur-sm border border-cyan-500/20 flex items-center justify-center text-cyan-300 hover:bg-cyan-500/10 hover:border-cyan-400 transition-all">
-                  <MessageCircle size={16} />
+                <a
+                  href="https://discord.gg"
+                  target="_blank"
+                  rel="noopener"
+                  className="w-11 h-11 rounded-xl bg-amber-500/10 border border-amber-500/30 flex items-center justify-center text-amber-300 hover:bg-amber-500/20 hover:border-amber-400 hover:scale-110 transition-all shadow-lg"
+                >
+                  <MessageCircle size={18} />
                 </a>
               </div>
             </div>
+
+            {/* Back to Top */}
             <button
               onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
-              className="mt-6 flex items-center gap-2 text-xs text-cyan-300 hover:text-cyan-200 transition-colors group"
+              className="mt-10 flex items-center gap-2 text-sm font-medium text-amber-300 hover:text-amber-100 transition-all group"
             >
-              <ArrowUp size={14} className="group-hover:-translate-y-1 transition-transform" />
+              <div className="p-2 rounded-full bg-amber-500/10 border border-amber-500/30 group-hover:bg-amber-500/20 transition-all">
+                <ArrowUp size={16} className="group-hover:-translate-y-1 transition-transform" />
+              </div>
               Back to Top
             </button>
           </div>
         </div>
 
-        {/* Bottom */}
-        <div className="mt-10 pt-6 border-t border-cyan-500/10 flex flex-col sm:flex-row justify-between items-center gap-3 text-xs text-gray-500">
-          <p>© {new Date().getFullYear()} Nawa Napam. All rights reserved.</p>
-          <p className="flex items-center gap-1">
-            <span>Made with</span>
-            <span className="text-cyan-400">love</span>
-            <span>in</span>
-            <span className="font-medium text-cyan-300">India</span>
+        {/* Bottom Bar */}
+        <div className="mt-16 pt-8 border-t border-amber-500/20 flex flex-col sm:flex-row justify-between items-center gap-4 text-xs text-amber-200/60">
+          <p>© {currentYear} Nawa Napam. Crafted with passion in India</p>
+          <p className="flex items-center gap-1.5 font-medium">
+            Made with
+            <Heart size={14} className="text-amber-400 fill-amber-400" />
+            in
+            <span className="text-amber-300">Bharat</span>
           </p>
         </div>
       </div>
 
-      <div className="absolute inset-x-0 bottom-0 h-px bg-gradient-to-r from-transparent via-cyan-500/30 to-transparent" />
+      {/* Final Golden Accent Line */}
+      <div className="absolute inset-x-0 bottom-0 h-1 bg-gradient-to-r from-transparent via-amber-500/30 to-transparent" />
     </footer>
   );
 }
