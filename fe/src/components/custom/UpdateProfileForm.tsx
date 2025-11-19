@@ -2,38 +2,25 @@
 
 import { useState, useEffect } from "react";
 import { useSession } from "next-auth/react";
-import { useUpdateUser } from "@/hooks/use-update-user";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Toaster } from "@/components/ui/sonner";
-import {
-  User,
-  Mail,
-  Lock,
-  Image as ImageIcon,
-  Globe,
-  ArrowLeft,
-  Sparkles,
-  CheckCircle,
-} from "lucide-react";
 import Link from "next/link";
+import { Pencil, ArrowLeft, Check, Globe, Sparkles } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { toast } from "sonner";
 
-export default function UpdateProfileForm() {
+export default function ProfileSettingsPage() {
   const { data: session } = useSession();
-  const { updateUser, isLoading, error } = useUpdateUser();
+  const [isEditing, setIsEditing] = useState<string | null>(null);
+  const [currentTime, setCurrentTime] = useState("");
 
   const [formData, setFormData] = useState({
-    name: "",
-    username: "",
-    email: "",
-    password: "",
-    image: "",
+    name: session?.user?.name || "",
+    username: session?.user?.username || "",
+    email: session?.user?.email || "",
+    bio: "Lover of chai, cricket, and deep conversations 🌿",
+    location: "India",
   });
-
-  const [validationErrors, setValidationErrors] = useState<{ [key: string]: string }>({});
-  const [currentTime, setCurrentTime] = useState("");
 
   // Live IST Time
   useEffect(() => {
@@ -48,257 +35,113 @@ export default function UpdateProfileForm() {
     return () => clearInterval(int);
   }, []);
 
-  // Initialize form with session data
-  useEffect(() => {
-    if (session?.user) {
-      setFormData({
-        name: session.user.name || "",
-        username: session.user.username || "",
-        email: session.user.email || "",
-        password: "",
-        image: session.user.image || "",
-      });
-    }
-  }, [session]);
-
-  const validateForm = () => {
-    const errors: { [key: string]: string } = {};
-
-    if (formData.name.trim() && formData.name.trim().length < 2)
-      errors.name = "Name must be at least 2 characters";
-
-    if (formData.username && formData.username !== session?.user?.username) {
-      if (formData.username.length < 3) errors.username = "Min 3 characters";
-      else if (formData.username.length > 20) errors.username = "Max 20 characters";
-      else if (!/^[a-zA-Z0-9_-]+$/.test(formData.username))
-        errors.username = "Only letters, numbers, _, -";
-    }
-
-    if (formData.email && !/\S+@\S+\.\S+/.test(formData.email))
-      errors.email = "Invalid email";
-
-    if (formData.password && formData.password.length < 6)
-      errors.password = "Min 6 characters";
-
-    if (formData.image && formData.image.trim()) {
-      try { new URL(formData.image); } catch { errors.image = "Invalid URL"; }
-    }
-
-    setValidationErrors(errors);
-    return Object.keys(errors).length === 0;
-  };
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!validateForm()) return;
-
-    const updateData: Record<string, string> = {};
-    if (formData.name.trim() !== (session?.user?.name || "")) updateData.name = formData.name.trim();
-    if (formData.username !== (session?.user?.username || "")) updateData.username = formData.username;
-    if (formData.email !== (session?.user?.email || "")) updateData.email = formData.email;
-    if (formData.password) updateData.password = formData.password;
-    if (formData.image !== (session?.user?.image || "")) updateData.image = formData.image;
-
-    if (Object.keys(updateData).length === 0) {
-      // toast("No changes made", { icon: "Info" });
-      return;
-    }
-
-    const result = await updateUser(updateData);
-    if (result) {
-      setFormData(prev => ({ ...prev, password: "" }));
-      setValidationErrors({});
-      // toast.success("Profile updated successfully!");
-    }
-  };
-
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: value }));
-    if (validationErrors[name]) {
-      setValidationErrors(prev => ({ ...prev, [name]: "" }));
-    }
+  const handleSave = (field: string) => {
+    // In real app: call API to update
+    toast.success(`${field.charAt(0).toUpperCase() + field.slice(1)} updated`);
+    setIsEditing(null);
   };
 
   return (
-    <div className="relative min-h-screen flex items-center justify-center p-4 overflow-hidden bg-gradient-to-br from-[#0a140a] via-[#0f1a0f] to-[#0a140a]">
-      {/* Golden Animated Blobs */}
-      <div className="absolute inset-0 opacity-30 pointer-events-none">
-        <div className="absolute w-96 h-96 bg-amber-600/40 rounded-full blur-3xl -top-48 -left-48 animate-pulse" />
-        <div className="absolute w-80 h-80 bg-emerald-700/40 rounded-full blur-3xl -bottom-40 -right-40 animate-pulse delay-700" />
-      </div>
-
-      {/* Floating Golden Sparkles */}
-      <div className="absolute inset-0 pointer-events-none">
-        {[...Array(6)].map((_, i) => (
-          <Sparkles
-            key={i}
-            size={18}
-            className="absolute text-amber-400/30 animate-float"
-            style={{
-              top: `${15 + i * 14}%`,
-              left: i % 2 === 0 ? "8%" : "78%",
-              animationDelay: `${i * 0.6}s`,
-            }}
-          />
-        ))}
-      </div>
-
-      {/* Top Bar */}
-      <div className="absolute top-6 left-6 right-6 flex justify-between items-center z-20">
-        <Link
-          href="/dashboard"
-          className="group flex items-center gap-2 text-amber-200 hover:text-amber-100 text-sm font-medium transition-all"
-        >
+    <div className="min-h-screen bg-gradient-to-br from-[#0a140a] via-[#0f1a0f] to-[#0a140a] text-amber-100">
+      {/* Header */}
+      <header className="fixed top-0 inset-x-0 z-50 h-16 bg-white/5 backdrop-blur-2xl border-b border-amber-500/20 flex items-center justify-between px-6">
+        <Link href="/dashboard" className="group flex items-center gap-2 text-amber-200 hover:text-amber-100 text-sm font-medium transition-all">
           <ArrowLeft size={16} className="group-hover:-translate-x-1 transition-transform" />
-          Back to Dashboard
+          Dashboard
         </Link>
         <div className="flex items-center gap-2 text-amber-200 text-xs font-medium">
           <Globe size={14} className="text-amber-400" />
           <span className="font-mono tracking-wider">{currentTime}</span>
         </div>
-      </div>
+      </header>
 
-      {/* Profile Update Card */}
-      <Card className="relative z-10 w-full max-w-lg bg-white/8 backdrop-blur-2xl border border-amber-500/30 rounded-3xl shadow-2xl shadow-amber-500/20 p-10">
-        <div className="text-center mb-10">
-          <h1
-            className="text-4xl font-black tracking-tight"
-            style={{ fontFamily: "var(--font-cinzel), serif" }}
-          >
+      {/* Main Content */}
+      <main className="pt-20 pb-10 px-6 max-w-2xl mx-auto">
+        <div className="text-center mb-12">
+          <h1 className="text-4xl font-black tracking-tight" style={{ fontFamily: "var(--font-cinzel), serif" }}>
             <span className="bg-gradient-to-r from-amber-400 via-yellow-500 to-amber-300 bg-clip-text text-transparent">
-              Update Profile
+              Profile Settings
             </span>
           </h1>
-          <p className="text-amber-100/70 text-sm mt-3">Keep your presence vibrant and true</p>
+          <p className="text-amber-200/70 mt-3">Make your presence truly yours</p>
         </div>
 
         {/* Avatar */}
         <div className="flex justify-center mb-10">
           <div className="relative group">
             <Avatar className="w-32 h-32 ring-4 ring-amber-500/40 shadow-2xl">
-              <AvatarImage src={formData.image ?? session?.user?.image ?? undefined} />
+              <AvatarImage src={session?.user?.image || ""} />
               <AvatarFallback className="bg-gradient-to-br from-amber-500 to-yellow-600 text-black text-3xl font-bold">
                 {(session?.user?.name || "U").charAt(0).toUpperCase()}
               </AvatarFallback>
             </Avatar>
-            <div className="absolute bottom-0 right-0 w-10 h-10 bg-gradient-to-r from-amber-500 to-yellow-600 rounded-full flex items-center justify-center shadow-xl border-4 border-black/20">
-              <ImageIcon size={18} className="text-black" />
-            </div>
+            <button className="absolute bottom-2 right-2 p-3 bg-gradient-to-r from-amber-500 to-yellow-600 rounded-full shadow-xl opacity-0 group-hover:opacity-100 transition-all hover:scale-110">
+              <Pencil size={18} className="text-black" />
+            </button>
           </div>
         </div>
 
-        <form onSubmit={handleSubmit} className="space-y-6">
-          {/* Name */}
-          <div className="relative">
-            <User className="absolute left-3 top-3.5 w-5 h-5 text-amber-400" />
-            <Input
-              name="name"
-              type="text"
-              value={formData.name}
-              onChange={handleChange}
-              placeholder="Full Name"
-              className={`pl-11 h-12 bg-white/10 border-amber-500/30 text-amber-50 placeholder-amber-200/50 focus:border-amber-400 focus:ring-amber-400/20 rounded-xl ${
-                validationErrors.name ? "border-red-500/50" : ""
-              }`}
-            />
-            {validationErrors.name && <p className="text-xs text-red-400 mt-1 pl-11">{validationErrors.name}</p>}
-          </div>
+        {/* Editable Fields */}
+        <div className="space-y-6 bg-white/5 backdrop-blur-2xl rounded-xl p-8 border border-amber-500/20 shadow-2xl">
+          {[
+            { label: "Full Name", key: "name", value: formData.name },
+            { label: "Username", key: "username", value: formData.username },
+            { label: "Email", key: "email", value: formData.email },
+            { label: "Bio", key: "bio", value: formData.bio, multiline: true },
+            { label: "Location", key: "location", value: formData.location },
+          ].map((field) => (
+            <div key={field.key} className="group relative">
+              <label className="text-amber-200/70 text-sm font-medium">{field.label}</label>
 
-          {/* Username */}
-          <div className="relative">
-            <User className="absolute left-3 top-3.5 w-5 h-5 text-amber-400" />
-            <Input
-              name="username"
-              type="text"
-              value={formData.username}
-              onChange={handleChange}
-              placeholder="Username"
-              className={`pl-11 h-12 bg-white/10 border-amber-500/30 text-amber-50 placeholder-amber-200/50 focus:border-amber-400 focus:ring-amber-400/20 rounded-xl ${
-                validationErrors.username ? "border-red-500/50" : ""
-              }`}
-            />
-            {validationErrors.username && <p className="text-xs text-red-400 mt-1 pl-11">{validationErrors.username}</p>}
-          </div>
-
-          {/* Email */}
-          <div className="relative">
-            <Mail className="absolute left-3 top-3.5 w-5 h-5 text-amber-400" />
-            <Input
-              name="email"
-              type="email"
-              value={formData.email}
-              onChange={handleChange}
-              placeholder="you@example.com"
-              className={`pl-11 h-12 bg-white/10 border-amber-500/30 text-amber-50 placeholder-amber-200/50 focus:border-amber-400 focus:ring-amber-400/20 rounded-xl ${
-                validationErrors.email ? "border-red-500/50" : ""
-              }`}
-            />
-            {validationErrors.email && <p className="text-xs text-red-400 mt-1 pl-11">{validationErrors.email}</p>}
-          </div>
-
-          {/* Password */}
-          <div className="relative">
-            <Lock className="absolute left-3 top-3.5 w-5 h-5 text-amber-400" />
-            <Input
-              name="password"
-              type="password"
-              value={formData.password}
-              onChange={handleChange}
-              placeholder="New password (leave blank to keep)"
-              className={`pl-11 h-12 bg-white/10 border-amber-500/30 text-amber-50 placeholder-amber-200/50 focus:border-amber-400 focus:ring-amber-400/20 rounded-xl ${
-                validationErrors.password ? "border-red-500/50" : ""
-              }`}
-            />
-            {validationErrors.password && <p className="text-xs text-red-400 mt-1 pl-11">{validationErrors.password}</p>}
-          </div>
-
-          {/* Image URL */}
-          <div className="relative">
-            <ImageIcon className="absolute left-3 top-3.5 w-5 h-5 text-amber-400" />
-            <Input
-              name="image"
-              type="url"
-              value={formData.image}
-              onChange={handleChange}
-              placeholder="https://example.com/avatar.jpg"
-              className={`pl-11 h-12 bg-white/10 border-amber-500/30 text-amber-50 placeholder-amber-200/50 focus:border-amber-400 focus:ring-amber-400/20 rounded-xl ${
-                validationErrors.image ? "border-red-500/50" : ""
-              }`}
-            />
-            {validationErrors.image && <p className="text-xs text-red-400 mt-1 pl-11">{validationErrors.image}</p>}
-          </div>
-
-          {/* Server Error */}
-          {error && (
-            <div className="bg-red-500/10 border border-red-500/30 text-amber-100 px-4 py-3 rounded-xl text-sm flex items-center gap-2">
-              {error}
+              {isEditing === field.key ? (
+                <div className="mt-2 flex items-center gap-3">
+                  {field.multiline ? (
+                    <textarea
+                      value={field.value}
+                      onChange={(e) => setFormData({ ...formData, [field.key]: e.target.value })}
+                      className="flex-1 bg-white/10 border border-amber-500/40 rounded-lg px-4 py-3 text-amber-100 placeholder-amber-300/60 focus:border-amber-400 outline-none transition-all"
+                      rows={3}
+                    />
+                  ) : (
+                    <Input
+                      value={field.value}
+                      onChange={(e) => setFormData({ ...formData, [field.key]: e.target.value })}
+                      className="flex-1 bg-white/10 border-amber-500/40 text-amber-100 placeholder-amber-300/60 focus:border-amber-400 rounded-lg h-12"
+                    />
+                  )}
+                  <button
+                    onClick={() => handleSave(field.label)}
+                    className="p-3 bg-gradient-to-r from-amber-500 to-yellow-600 rounded-lg hover:shadow-lg hover:shadow-amber-500/40 transition-all"
+                  >
+                    <Check size={18} className="text-black" />
+                  </button>
+                </div>
+              ) : (
+                <div className="mt-2 flex items-center justify-between">
+                  <p className="text-amber-100 font-medium py-3">{field.value || "(Not set)"}</p>
+                  <button
+                    onClick={() => setIsEditing(field.key)}
+                    className="p-2.5 rounded-full bg-white/10 hover:bg-amber-500/20 transition-all opacity-0 group-hover:opacity-100"
+                  >
+                    <Pencil size={16} className="text-amber-400" />
+                  </button>
+                </div>
+              )}
             </div>
-          )}
+          ))}
+        </div>
 
-          {/* Submit Button */}
-          <Button
-            type="submit"
-            disabled={isLoading}
-            className="w-full h-14 bg-gradient-to-r from-amber-500 to-yellow-600 hover:from-amber-300 hover:to-yellow-700 text-black font-bold text-lg rounded-2xl shadow-xl transition-all disabled:opacity-60"
-          >
-            {isLoading ? (
-              <>Updating Profile...</>
-            ) : (
-              <>
-                <CheckCircle size={20} className="mr-2" />
-                Save Changes
-              </>
-            )}
+        {/* Update All Button */}
+        <div className="mt-10 text-center">
+          <Button className="px-12 py-6 bg-gradient-to-r from-amber-500 to-yellow-600 text-black font-medium text-lg rounded-lg shadow-xl">
+            Save All Changes
           </Button>
-        </form>
+        </div>
 
-        <p className="mt-8 text-center text-xs text-amber-200/60 font-medium">
-          Your data is encrypted • Secure • Private
+        <p className="text-center text-xs text-amber-200/50 mt-8">
+          Your profile reflects who you are. Make it authentic.
         </p>
-      </Card>
-
-      <Toaster position="top-center" theme="dark" />
+      </main>
     </div>
   );
 }

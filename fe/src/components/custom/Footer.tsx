@@ -10,7 +10,7 @@ export default function Footer() {
       {/* Subtle Golden Glow Line */}
       <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-amber-500/40 to-transparent" />
 
-      <div className="container px-4 sm:px-6 py-16 sm:py-20">
+      <div className="container px-4 sm:px-6 py-16 sm:py-20 m-auto">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-10 lg:gap-16">
 
           {/* Brand Section */}
@@ -87,7 +87,7 @@ export default function Footer() {
                   href="https://instagram.com"
                   target="_blank"
                   rel="noopener"
-                  className="w-11 h-11 rounded-xl bg-amber-500/10 border border-amber-500/30 flex items-center justify-center text-amber-300 hover:bg-amber-500/20 hover:border-amber-400 hover:scale-110 transition-all shadow-lg"
+                  className="w-11 h-11 rounded-md bg-amber-500/10 border border-amber-500/30 flex items-center justify-center text-amber-300 hover:bg-amber-500/20 hover:border-amber-400 hover:scale-110 transition-all shadow-lg"
                 >
                   <Instagram size={18} />
                 </a>
@@ -95,7 +95,7 @@ export default function Footer() {
                   href="https://x.com"
                   target="_blank"
                   rel="noopener"
-                  className="w-11 h-11 rounded-xl bg-amber-500/10 border border-amber-500/30 flex items-center justify-center text-amber-300 hover:bg-amber-500/20 hover:border-amber-400 hover:scale-110 transition-all shadow-lg"
+                  className="w-11 h-11 rounded-md bg-amber-500/10 border border-amber-500/30 flex items-center justify-center text-amber-300 hover:bg-amber-500/20 hover:border-amber-400 hover:scale-110 transition-all shadow-lg"
                 >
                   <Twitter size={18} />
                 </a>
@@ -103,7 +103,7 @@ export default function Footer() {
                   href="https://discord.gg"
                   target="_blank"
                   rel="noopener"
-                  className="w-11 h-11 rounded-xl bg-amber-500/10 border border-amber-500/30 flex items-center justify-center text-amber-300 hover:bg-amber-500/20 hover:border-amber-400 hover:scale-110 transition-all shadow-lg"
+                  className="w-11 h-11 rounded-md bg-amber-500/10 border border-amber-500/30 flex items-center justify-center text-amber-300 hover:bg-amber-500/20 hover:border-amber-400 hover:scale-110 transition-all shadow-lg"
                 >
                   <MessageCircle size={18} />
                 </a>

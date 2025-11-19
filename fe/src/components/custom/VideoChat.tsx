@@ -76,7 +76,7 @@ export default function VideoChatPage() {
   };
 
   return (
-    <div className="h-screen bg-[#0a0f0d] flex flex-col overflow-hidden font-sans">
+    <div className="min-h-screen bg-[#0a0f0d] flex flex-col font-sans">
       {/* Minimal Header */}
       <header className="fixed top-0 inset-x-0 z-50 h-16 bg-black/40 backdrop-blur-xl border-b border-white/5 flex items-center justify-between px-6 text-white/80">
         <Link href="/dashboard" className="flex items-center gap-2 text-sm hover:text-white transition">
@@ -92,9 +92,9 @@ export default function VideoChatPage() {
       {/* Main Layout - Full Viewport */}
       <div className="flex-1 flex flex-col pt-16">
         {/* Video Grid */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 flex-1 gap-4 p-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 flex-1 gap-4 p-4">
           {/* Self Video */}
-          <div className="relative rounded-2xl overflow-hidden bg-black/50 border border-white/10">
+          <div className="relative rounded-lg overflow-hidden bg-black/50 border border-white/10">
             <video ref={selfVideoRef} autoPlay muted playsInline className="w-full h-full object-cover" />
             <div className="absolute bottom-3 left-3 bg-black/70 backdrop-blur-md px-3 py-1.5 rounded-full text-xs font-medium flex items-center gap-2 border border-white/20">
               <User size={12} />
@@ -108,7 +108,7 @@ export default function VideoChatPage() {
           </div>
 
           {/* Stranger Video */}
-          <div className="relative rounded-2xl overflow-hidden bg-black/50 border border-white/10">
+          <div className="relative rounded-lg overflow-hidden bg-black/50 border border-white/10">
             <video ref={strangerVideoRef} autoPlay playsInline className="w-full h-full object-cover" />
             <div className="absolute bottom-3 left-3 bg-black/70 backdrop-blur-md px-3 py-1.5 rounded-full text-xs font-medium flex items-center gap-2 border border-white/20">
               <Users size={12} />
@@ -118,7 +118,52 @@ export default function VideoChatPage() {
         </div>
 
         {/* Bottom Panel */}
-        <div className="bg-gradient-to-t from-black/80 via-black/40 to-transparent p-6 space-y-6">
+        <div className="bg-gradient-to-t from-black/80 via-black/40 to-transparent grid grid-cols-1 md:grid-cols-2 p-4">
+
+        {/* Left Panel */}
+
+          {/* Chat */}
+          <div>
+          <div className="bg-white/5 backdrop-blur-xl rounded-xl p-5 border border-white/10 w-full mx-auto">
+            <div className="h-32 overflow-y-auto space-y-3 pr-2 scrollbar-thin scrollbar-thumb-white/20">
+              {messages.map((msg, i) => (
+                <div key={i} className={`flex ${msg.sender === "self" ? "justify-end" : "justify-start"}`}>
+                  <div
+                    className={`max-w-[80%] px-4 py-2.5 rounded-lg text-sm font-medium ${
+                      msg.sender === "self"
+                        ? "bg-gradient-to-r from-amber-500 to-yellow-500 text-black"
+                        : "bg-white/10 text-white/90"
+                    }`}
+                  >
+                    {msg.text}
+                  </div>
+                </div>
+              ))}
+              <div ref={messageEndRef} />
+            </div>
+
+            <form onSubmit={sendMessage} className="mt-4 flex gap-3">
+              <input
+                type="text"
+                value={inputMessage}
+                onChange={(e) => setInputMessage(e.target.value)}
+                placeholder="Send a message..."
+                className="flex-1 bg-white/10 border border-white/20 rounded-lg px-5 py-3 text-white placeholder-white/50 focus:border-amber-400 focus:outline-none transition text-sm"
+              />
+              <button
+                type="submit"
+                className="p-3.5 bg-gradient-to-r from-amber-500 to-yellow-500 rounded-lg hover:shadow-lg hover:shadow-amber-500/30 transition-all"
+              >
+                <Send size={20} className="text-black" />
+              </button>
+            </form>
+          </div>
+
+          </div>
+
+        {/* Right Panel */}
+          
+        <div className="p-6 space-y-6">
           {/* Keywords - Minimal Golden Pills */}
           <div className="flex flex-wrap justify-center gap-3">
             {keywords.map((kw, i) => (
@@ -135,6 +180,18 @@ export default function VideoChatPage() {
                 </button>
               </div>
             ))}
+          </div>
+
+          {/* Action Buttons */}
+          <div className="flex justify-center gap-6">
+            <button className="flex items-center gap-3 px-8 py-4 bg-red-500/20 border border-red-500/40 text-red-400 font-medium rounded-full hover:bg-red-500/30 transition-all">
+              <Power size={22} />
+              End Chat
+            </button>
+            <button className="flex items-center gap-3 px-8 py-4 bg-white/10 border border-white/30 text-white font-medium rounded-full hover:bg-white/20 transition-all">
+              <RotateCcw size={22} />
+              Next
+            </button>
           </div>
 
           {/* Controls */}
@@ -166,53 +223,8 @@ export default function VideoChatPage() {
             </button>
           </div>
 
-          {/* Chat */}
-          <div className="bg-white/5 backdrop-blur-xl rounded-3xl p-5 border border-white/10 max-w-2xl mx-auto">
-            <div className="h-32 overflow-y-auto space-y-3 pr-2 scrollbar-thin scrollbar-thumb-white/20">
-              {messages.map((msg, i) => (
-                <div key={i} className={`flex ${msg.sender === "self" ? "justify-end" : "justify-start"}`}>
-                  <div
-                    className={`max-w-[80%] px-4 py-2.5 rounded-3xl text-sm font-medium ${
-                      msg.sender === "self"
-                        ? "bg-gradient-to-r from-amber-500 to-yellow-500 text-black"
-                        : "bg-white/10 text-white/90"
-                    }`}
-                  >
-                    {msg.text}
-                  </div>
-                </div>
-              ))}
-              <div ref={messageEndRef} />
-            </div>
-
-            <form onSubmit={sendMessage} className="mt-4 flex gap-3">
-              <input
-                type="text"
-                value={inputMessage}
-                onChange={(e) => setInputMessage(e.target.value)}
-                placeholder="Send a message..."
-                className="flex-1 bg-white/10 border border-white/20 rounded-full px-5 py-3 text-white placeholder-white/50 focus:border-amber-400 focus:outline-none transition text-sm"
-              />
-              <button
-                type="submit"
-                className="p-3.5 bg-gradient-to-r from-amber-500 to-yellow-500 rounded-full hover:shadow-lg hover:shadow-amber-500/30 transition-all"
-              >
-                <Send size={20} className="text-black" />
-              </button>
-            </form>
           </div>
 
-          {/* Action Buttons */}
-          <div className="flex justify-center gap-6">
-            <button className="flex items-center gap-3 px-8 py-4 bg-red-500/20 border border-red-500/40 text-red-400 font-medium rounded-full hover:bg-red-500/30 transition-all">
-              <Power size={22} />
-              End Chat
-            </button>
-            <button className="flex items-center gap-3 px-8 py-4 bg-white/10 border border-white/30 text-white font-medium rounded-full hover:bg-white/20 transition-all">
-              <RotateCcw size={22} />
-              Next
-            </button>
-          </div>
         </div>
       </div>
     </div>
