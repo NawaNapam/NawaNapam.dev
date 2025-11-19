@@ -82,17 +82,17 @@ export default function HeroSection() {
                 <>
                   <Link
                     href="/chat"
-                    className="group w-full sm:w-auto px-10 py-5 bg-gradient-to-r from-amber-500 to-yellow-600 text-gray-900 font-bold text-xl rounded-2xl transition-all hover:scale-105 hover:shadow-2xl hover:shadow-amber-500/40 flex items-center justify-center gap-3 shadow-xl"
+                    className="group w-[80vw] sm:w-auto px-10 py-5 bg-gradient-to-r from-amber-500 to-yellow-600 text-gray-900 font-bold text-xl rounded-md transition-all flex items-center justify-center gap-3 shadow-xl"
                   >
-                    <Video size={26} className="group-hover:rotate-12 transition-transform" />
+                    <Video size={24} className="group-hover:rotate-12 transition-transform hidden sm:block" />
                     Start Video Chat
-                    <Zap size={22} className="group-hover:scale-110 transition-transform" />
+                    <Zap size={21} className="hidden sm:block" />
                   </Link>
                   <Link
                     href="/dashboard"
-                    className="w-full sm:w-auto px-8 py-4 bg-white/10 backdrop-blur-xl border border-amber-500/30 text-amber-100 font-medium rounded-2xl hover:bg-white/20 hover:border-amber-400 transition-all flex items-center justify-center gap-2"
+                    className="w-[80vw] sm:w-auto px-10 py-5 bg-white/10 backdrop-blur-xl border border-amber-500/30 text-amber-100 font-medium rounded-md hover:bg-white/20 hover:border-amber-400 transition-all flex items-center justify-center gap-3"
                   >
-                    <Users size={20} />
+                    <Users size={24} />
                     Dashboard
                   </Link>
                 </>
@@ -100,29 +100,29 @@ export default function HeroSection() {
                 <>
                   <Link
                     href="/chat"
-                    className="group w-full sm:w-auto px-12 py-5 bg-gradient-to-r from-amber-500 to-yellow-600 text-gray-900 font-bold text-xl rounded-2xl transition-all hover:shadow-2xl hover:shadow-amber-500/50 flex items-center justify-center gap-4 shadow-2xl"
+                    className="group w-full sm:w-auto px-11 py-4 bg-gradient-to-r from-amber-500 to-yellow-600 text-gray-900 font-bold text-xl rounded-md transition-all flex items-center justify-center gap-4 shadow-lg"
                   >
-                    <Video size={28} className="group-hover:rotate-12 transition-transform hidden sm:block" />
-                    Start Chatting Now
-                    <Zap size={24} className="group-hover:scale-110 transition-transform hidden sm:block" />
+                    <Video size={24} className="group-hover:rotate-12 transition-transform" />
+                    {isAuthenticated && user ? "Start Chatting Now" : "Get Started Now" }
+                    <Zap size={22} />
                   </Link>
-                  <Link
+                  {/* <Link
                     href="/login"
-                    className="w-full sm:w-auto px-8 py-4 bg-white/10 backdrop-blur-xl border border-amber-500/30 text-amber-100 font-medium rounded-2xl hover:bg-white/20 hover:border-amber-400 transition-all flex items-center justify-center gap-2"
+                    className="w-full sm:w-auto px-8 py-4 bg-white/10 backdrop-blur-xl border border-amber-500/30 text-amber-100 font-medium rounded-md hover:bg-white/20 hover:border-amber-400 transition-all flex items-center justify-center gap-2"
                   >
                     <Users size={22} />
                     Sign In
-                  </Link>
+                  </Link> */}
                 </>
               )}
             </div>
 
             {/* Trust Indicators */}
-            <div className="flex flex-wrap justify-center gap-8 mt-16 text-amber-100/70 text-sm font-medium">
+            {/* <div className="flex flex-wrap justify-center gap-8 mt-16 text-amber-100/70 text-sm font-medium">
               <div className="flex items-center gap-2"><Globe size={18} className="text-amber-400" /><span>190+ Countries</span></div>
               <div className="flex items-center gap-2"><Users size={18} className="text-amber-400" /><span>Live Now: <span className="text-amber-300 font-bold">12.4K</span></span></div>
               <div className="flex items-center gap-2"><Zap size={18} className="text-amber-400" /><span>&lt; 3s Connect</span></div>
-            </div>
+            </div> */}
           </div>
         </div>
 
@@ -140,7 +140,10 @@ export default function HeroSection() {
           <div className="text-center mb-16">
             <h2 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-amber-50 mb-6">
               Why Choose{" "}
-              <span className="bg-gradient-to-r from-amber-400 to-yellow-500 bg-clip-text text-transparent">
+              <span 
+              className="bg-gradient-to-r from-amber-400 to-yellow-500 bg-clip-text text-transparent"
+              style={{ fontFamily: "var(--font-cinzel), serif" }}
+              >
                 Nawa Napam?
               </span>
             </h2>
@@ -153,10 +156,10 @@ export default function HeroSection() {
             {WHY_CHOOSE_US.map((f, i) => (
               <article
                 key={f.title}
-                className="group bg-white/8 backdrop-blur-xl rounded-2xl p-8 shadow-xl hover:shadow-2xl hover:shadow-amber-500/20 transition-all duration-500 hover:-translate-y-2 border border-amber-500/20"
+                className="group bg-white/8 backdrop-blur-xl rounded-lg p-8 shadow-xl hover:shadow-2xl hover:shadow-amber-500/20 transition-all duration-500 hover:-translate-y-2 border border-amber-500/20"
               >
                 <div className="flex flex-col items-center space-y-5">
-                  <div className="p-4 rounded-2xl bg-gradient-to-br from-amber-500 to-yellow-600 text-white shadow-lg group-hover:scale-110 transition-transform duration-300">
+                  <div className="p-4 rounded-md bg-gradient-to-br from-amber-500 to-yellow-600 text-white shadow-lg group-hover:scale-110 transition-transform duration-300">
                     <f.icon size={28} />
                   </div>
                   <h3 className="font-bold text-xl text-amber-100 group-hover:text-amber-300 transition-colors">

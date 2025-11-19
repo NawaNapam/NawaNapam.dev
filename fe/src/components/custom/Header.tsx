@@ -77,7 +77,7 @@ export default function Header() {
 
               {/* Dropdown */}
               {dropdownOpen && (
-                <div className="absolute right-0 mt-3 w-64 origin-top-right rounded-2xl bg-black/70 backdrop-blur-2xl border border-amber-500/30 shadow-2xl overflow-hidden">
+                <div className="absolute right-0 mt-3 w-64 origin-top-right rounded-md bg-black/70 backdrop-blur-2xl border border-amber-500/30 shadow-2xl overflow-hidden">
                   <div className="p-4 border-b border-amber-500/20">
                     <p className="text-sm font-bold text-amber-100" style={{ fontFamily: "'Cinzel Decorative', serif" }}>
                       {user.name || user.username}
@@ -119,13 +119,13 @@ export default function Header() {
             <div className="flex items-center gap-3">
               <Link
                 href="/login"
-                className="hidden sm:inline-flex h-10 px-6 rounded-xl text-sm font-medium text-amber-100 border border-amber-500/40 hover:border-amber-400 hover:bg-amber-500/10 transition-all items-center"
+                className="hidden sm:inline-flex h-10 px-6 rounded-md text-sm font-medium text-amber-100 border border-amber-500/40 hover:border-amber-400 hover:bg-amber-500/10 transition-all items-center"
               >
                 Login
               </Link>
               <Link
                 href="/signup"
-                className="hidden sm:inline-flex h-10 px-6 rounded-xl text-sm font-bold bg-gradient-to-r from-amber-500 to-yellow-600 text-black shadow-lg hover:shadow-amber-500/40 transition-all items-center"
+                className="hidden sm:inline-flex h-10 px-6 rounded-md text-sm font-bold bg-gradient-to-r from-amber-500 to-yellow-600 text-black shadow-lg items-center"
               >
                 Join Now
               </Link>
