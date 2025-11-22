@@ -23,19 +23,17 @@ model User {
   username      String?         @unique
   email         String          @unique
   emailVerified DateTime?
-  passwordHash String?
-  isAnonymous  Boolean         @default(true)
-  banned       Boolean         @default(false)
+  passwordHash  String?
+  isAnonymous   Boolean         @default(true)
+  banned        Boolean         @default(false)
   image         String?
-
 
   accounts      Account[]
   sessions      Session[]
-  // Optional for WebAuthn support
   Authenticator Authenticator[]
 
-  chatRooms     ChatRoom[]      @relation("ChatRoomParticipants")
-  messages      Message[]
+  // Replace implicit many-to-many with explicit Participant relation
+  participants  Participant[]   // per-room participation records
   reportsMade   Report[]        @relation("ReportsByUser")
   reportsAgainst Report[]       @relation("ReportsAgainstUser")
   moderationLogs ModerationLog[]
@@ -117,14 +115,13 @@ model ChatRoom {
   endedAt       DateTime?
   lastMessageAt DateTime?
 
-  participants  User[] @relation("ChatRoomParticipants")
-  messages      Message[]
+  // explicit participants join model
+  participants  Participant[]
   reports       Report[]        // Opposite relation field for Report.room
-  
-   @@index([status])
+
+  @@index([status])
   @@index([createdAt])
   @@index([lastMessageAt])
-
 }
 
 enum ChatRoomStatus {
@@ -133,30 +130,26 @@ enum ChatRoomStatus {
   ENDED
 }
 
-model Message {
+model Participant {
   id        String   @id @default(uuid())
-  room      ChatRoom @relation(fields: [roomId], references: [id])
+  userId    String
   roomId    String
-  sender    User     @relation(fields: [senderId], references: [id])
-  senderId  String
-  type      MessageType
-  content   String
-  createdAt DateTime @default(now())
-  flagged   Boolean  @default(false)
+  joinedAt  DateTime @default(now())
+  leftAt    DateTime?
+  region    String?
+  lat       Float?
+  lon       Float?
+  ip        String?
+  device    String?
+  turnUsed  Boolean?    @default(false)
+  role      String?
 
-  reports   Report[]
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  room      ChatRoom @relation(fields: [roomId], references: [id], onDelete: Cascade)
 
-  
   @@index([roomId])
-  @@index([senderId])
-  @@index([createdAt])
-  @@index([flagged])
-}
-enum MessageType {
-  TEXT
-  SIGNAL
-  IMAGE
-  VIDEO_CHUNK
+  @@index([userId])
+  @@unique([userId, roomId])  // optional but recommended to avoid duplicates
 }
 
 model Report {
@@ -167,8 +160,7 @@ model Report {
   reportedUserId  String
   room            ChatRoom? @relation(fields: [roomId], references: [id])
   roomId          String?
-  message         Message? @relation(fields: [messageId], references: [id])
-  messageId       String?
+  message         String
   reason          String
   status          ReportStatus @default(PENDING)
   createdAt       DateTime @default(now())
@@ -177,7 +169,6 @@ model Report {
   @@index([reporterId])
   @@index([reportedUserId])
   @@index([roomId])
-  @@index([messageId])
   @@index([status])
   @@index([createdAt])
 }
