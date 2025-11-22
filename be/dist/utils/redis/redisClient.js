@@ -14,14 +14,30 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.sub = exports.redis = void 0;
 exports.safeEvalSha = safeEvalSha;
-// src/redis/client.ts
 const ioredis_1 = __importDefault(require("ioredis"));
-// const REDIS_URL = process.env.REDIS_URL || "redis://127.0.0.1:6379";
-exports.redis = new ioredis_1.default();
-exports.sub = new ioredis_1.default();
-// helper small wrapper
+exports.redis = new ioredis_1.default({
+    username: process.env.REDIS_USERNAME,
+    password: process.env.REDIS_PASSWORD,
+    host: process.env.REDIS_HOST,
+    port: Number(process.env.REDIS_PORT),
+    tls: {},
+});
+exports.sub = new ioredis_1.default({
+    username: process.env.REDIS_USERNAME,
+    password: process.env.REDIS_PASSWORD,
+    host: process.env.REDIS_HOST,
+    port: Number(process.env.REDIS_PORT),
+    tls: {},
+});
+// small wrapper for safe EVALSHA execution
 function safeEvalSha(sha, ...args) {
     return __awaiter(this, void 0, void 0, function* () {
-        return exports.redis.evalsha(sha, 0, ...args);
+        try {
+            return yield exports.redis.evalsha(sha, 0, ...args);
+        }
+        catch (err) {
+            console.error("[safeEvalSha] Redis error:", err);
+            throw err;
+        }
     });
 }

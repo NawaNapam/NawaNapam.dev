@@ -1,4 +1,3 @@
-// src/socket/authHandler.ts
 import { Socket } from "socket.io";
 import { redis } from "../utils/redis/redisClient";
 

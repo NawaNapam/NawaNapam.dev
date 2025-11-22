@@ -41,6 +41,8 @@ export const config = {
     "/dashboard/:path*",
     "/profile/:path*",
     "/dashboard",
+    "/chat",
+    "/chat/:path*",
     // Add other protected routes
   ],
 };

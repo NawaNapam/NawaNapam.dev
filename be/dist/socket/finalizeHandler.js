@@ -40,9 +40,6 @@ function handleEndRoom(socket, payload) {
         }
         catch (err) {
             console.error("finalize error", err);
-            // Fallback: push a minimal retry record so operators / a retry worker can investigate.
-            // NOTE: If the Lua script never ran, the stream entry wasn't created. This record is only a trace.
-            // Ideally you should ensure scripts are loaded and Redis is reachable.
             try {
                 yield redisClient_1.redis.lpush("persist:retry", JSON.stringify({
                     roomId,

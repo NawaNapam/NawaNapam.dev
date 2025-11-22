@@ -1,4 +1,3 @@
-// src/socket/heartbeatHandler.ts
 import { Socket } from "socket.io";
 import { redis } from "../utils/redis/redisClient";
 

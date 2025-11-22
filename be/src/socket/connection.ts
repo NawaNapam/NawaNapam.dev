@@ -1,4 +1,3 @@
-// src/socket/connection.ts
 import { Socket, Server } from "socket.io";
 import { sub, redis } from "../utils/redis/redisClient";
 import { handleMatchRequest } from "./matchHandler";
@@ -50,7 +49,6 @@ export function registerConnectionHandlers(io: Server) {
 
   } else if (parts[0] === "ended") {
     const [, roomId] = parts;
-    // optional: notify participants about room end if you want
     console.log("Room ended published:", roomId);
   }
 

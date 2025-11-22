@@ -1,7 +1,15 @@
 "use client";
 
 import Link from "next/link";
-import { Video, Zap, Users, Globe, Sparkles, Shield, EyeOff } from "lucide-react";
+import {
+  Video,
+  Zap,
+  Users,
+  Globe,
+  Sparkles,
+  Shield,
+  EyeOff,
+} from "lucide-react";
 import { useAuthStore } from "@/stores/authStore";
 import { useEffect, useState } from "react";
 
@@ -23,11 +31,19 @@ export default function HeroSection() {
         <div className="absolute inset-0 opacity-30 pointer-events-none">
           <div
             className="absolute w-96 h-96 bg-amber-600/40 rounded-full blur-3xl -top-48 -left-48 animate-pulse"
-            style={{ transform: `translate(${mousePos.x * 0.02}px, ${mousePos.y * 0.02}px)` }}
+            style={{
+              transform: `translate(${mousePos.x * 0.02}px, ${
+                mousePos.y * 0.02
+              }px)`,
+            }}
           />
           <div
             className="absolute w-80 h-80 bg-emerald-700/50 rounded-full blur-3xl -bottom-40 -right-40 animate-pulse delay-700"
-            style={{ transform: `translate(${mousePos.x * -0.015}px, ${mousePos.y * -0.015}px)` }}
+            style={{
+              transform: `translate(${mousePos.x * -0.015}px, ${
+                mousePos.y * -0.015
+              }px)`,
+            }}
           />
         </div>
 
@@ -50,12 +66,14 @@ export default function HeroSection() {
         {/* Main Content */}
         <div className="relative z-10 container mx-auto px-4 sm:px-6 lg:px-8 text-center py-8">
           <div className="max-w-5xl mx-auto space-y-10">
-
             {/* Badge */}
             <div className="inline-flex items-center gap-3 bg-white/10 backdrop-blur-xl border border-amber-500/30 rounded-full px-6 py-2.5 text-sm font-medium text-amber-100 tracking-wider shadow-lg">
               <Zap size={16} className="animate-pulse text-amber-400" />
               <span>Instant • Anonymous • Global</span>
-              <Globe size={16} className="animate-pulse delay-300 text-amber-400" />
+              <Globe
+                size={16}
+                className="animate-pulse delay-300 text-amber-400"
+              />
             </div>
 
             {/* Heading */}
@@ -70,8 +88,11 @@ export default function HeroSection() {
 
             {/* Description */}
             <p className="max-w-3xl mx-auto text-lg sm:text-xl text-amber-100/80 leading-relaxed font-light">
-              Skip the small talk. Connect instantly with souls across Bharat and the world.{" "}
-              <span className="text-amber-300 font-medium">Just you, them, and the moment.</span>
+              Skip the small talk. Connect instantly with souls across Bharat
+              and the world.{" "}
+              <span className="text-amber-300 font-medium">
+                Just you, them, and the moment.
+              </span>
             </p>
 
             {/* CTA */}
@@ -84,7 +105,10 @@ export default function HeroSection() {
                     href="/chat"
                     className="group w-[80vw] sm:w-auto px-10 py-5 bg-gradient-to-r from-amber-500 to-yellow-600 text-gray-900 font-bold text-xl rounded-md transition-all flex items-center justify-center gap-3 shadow-xl"
                   >
-                    <Video size={24} className="group-hover:rotate-12 transition-transform hidden sm:block" />
+                    <Video
+                      size={24}
+                      className="group-hover:rotate-12 transition-transform hidden sm:block"
+                    />
                     Start Video Chat
                     <Zap size={21} className="hidden sm:block" />
                   </Link>
@@ -102,8 +126,13 @@ export default function HeroSection() {
                     href="/chat"
                     className="group w-full sm:w-auto px-11 py-4 bg-gradient-to-r from-amber-500 to-yellow-600 text-gray-900 font-bold text-xl rounded-md transition-all flex items-center justify-center gap-4 shadow-lg"
                   >
-                    <Video size={24} className="group-hover:rotate-12 transition-transform" />
-                    {isAuthenticated && user ? "Start Chatting Now" : "Get Started Now" }
+                    <Video
+                      size={24}
+                      className="group-hover:rotate-12 transition-transform"
+                    />
+                    {isAuthenticated && user
+                      ? "Start Chatting Now"
+                      : "Get Started Now"}
                     <Zap size={22} />
                   </Link>
                   {/* <Link
@@ -140,15 +169,16 @@ export default function HeroSection() {
           <div className="text-center mb-16">
             <h2 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-amber-50 mb-6">
               Why Choose{" "}
-              <span 
-              className="bg-gradient-to-r from-amber-400 to-yellow-500 bg-clip-text text-transparent"
-              style={{ fontFamily: "var(--font-cinzel), serif" }}
+              <span
+                className="bg-gradient-to-r from-amber-400 to-yellow-500 bg-clip-text text-transparent"
+                style={{ fontFamily: "var(--font-cinzel), serif" }}
               >
                 Nawa Napam?
               </span>
             </h2>
             <p className="text-amber-100/70 text-lg max-w-3xl mx-auto">
-              Rooted in culture, built for the world — anonymous, instant, and truly human.
+              Rooted in culture, built for the world — anonymous, instant, and
+              truly human.
             </p>
           </div>
 
@@ -156,7 +186,7 @@ export default function HeroSection() {
             {WHY_CHOOSE_US.map((f, i) => (
               <article
                 key={f.title}
-                className="group bg-white/8 backdrop-blur-xl rounded-lg p-8 shadow-xl hover:shadow-2xl hover:shadow-amber-500/20 transition-all duration-500 hover:-translate-y-2 border border-amber-500/20"
+                className="group bg-white/8 backdrop-blur-xl rounded-lg p-8 shadow-xl hover:shadow-2xl hover:shadow-amber-500/20 transition-all duration-500 hover:-translate-y-2 border border-amber-500/20 text-center"
               >
                 <div className="flex flex-col items-center space-y-5">
                   <div className="p-4 rounded-md bg-gradient-to-br from-amber-500 to-yellow-600 text-white shadow-lg group-hover:scale-110 transition-transform duration-300">
@@ -165,7 +195,9 @@ export default function HeroSection() {
                   <h3 className="font-bold text-xl text-amber-100 group-hover:text-amber-300 transition-colors">
                     {f.title}
                   </h3>
-                  <p className="text-amber-100/70 text-sm leading-relaxed text-center">{f.desc}</p>
+                  <p className="text-amber-100/70 text-sm leading-relaxed text-center">
+                    {f.desc}
+                  </p>
                 </div>
               </article>
             ))}

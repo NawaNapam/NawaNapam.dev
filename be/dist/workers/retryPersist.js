@@ -21,7 +21,6 @@ const GROUP = process.env.STREAM_GROUP || "ended_rooms_group";
 const CONSUMER = process.env.STREAM_CONSUMER || (`worker-${Math.floor(Math.random() * 10000)}`);
 const NEXT_FINALIZE_ENDPOINT = (process.env.NEXT_PUBLIC_ORIGIN || "http://localhost:3000") + "/api/finalize-room";
 const NEXT_SHARED_SECRET = process.env.NEXT_SHARED_SECRET || "change_me_now";
-// -------- tuning (MVP-safe defaults) ----------
 const BATCH = Number(process.env.STREAM_BATCH || 10);
 const BLOCK_MS = Number(process.env.STREAM_BLOCK_MS || 2000);
 const MAX_RETRIES = Number(process.env.STREAM_MAX_RETRIES || 5); // deliveries > MAX_RETRIES => dead-letter
@@ -32,7 +31,6 @@ const TRIM_MAXLEN = Number(process.env.STREAM_TRIM_MAXLEN || 20000); // 0 to dis
 const TRIM_POLICY = process.env.STREAM_TRIM_POLICY || "~"; // approximate trim
 const HTTP_TIMEOUT_MS = Number(process.env.HTTP_TIMEOUT_MS || 8000);
 const redis = new ioredis_1.default(REDIS_URL);
-// -------------- helpers -----------------
 function parseEntry(entry) {
     var _a;
     // entry => [id, [field, value, ...]]
@@ -121,7 +119,6 @@ function moveToDeadAndDelete(id, reason, extra) {
         yield ackAndDelete([id]);
     });
 }
-// -------------- processing paths -----------------
 function processFresh() {
     return __awaiter(this, void 0, void 0, function* () {
         var _a, _b;

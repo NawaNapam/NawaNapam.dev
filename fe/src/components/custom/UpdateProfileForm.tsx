@@ -74,7 +74,11 @@ export default function ProfileSettingsPage() {
     const update = () => {
       const now = new Date();
       setCurrentTime(
-        now.toLocaleTimeString("en-IN", { hour: "2-digit", minute: "2-digit", hour12: true }) + " IST"
+        now.toLocaleTimeString("en-IN", {
+          hour: "2-digit",
+          minute: "2-digit",
+          hour12: true,
+        }) + " IST"
       );
     };
     update();
@@ -90,13 +94,19 @@ export default function ProfileSettingsPage() {
     { label: "Location", key: "location" },
   ];
 
-  const setField = <K extends ProfileField>(key: K, value: FormDataState[K]) => {
+  const setField = <K extends ProfileField>(
+    key: K,
+    value: FormDataState[K]
+  ) => {
     setFormData((prev) => ({ ...prev, [key]: value }));
   };
 
   async function handleSave(field: ProfileField) {
     const value = (formData[field] ?? "").toString().trim();
-    if (!value && (field === "username" || field === "email" || field === "name")) {
+    if (
+      !value &&
+      (field === "username" || field === "email" || field === "name")
+    ) {
       toast.error("Please provide a valid value");
       return;
     }
@@ -132,13 +142,17 @@ export default function ProfileSettingsPage() {
           `Failed to update ${field}`;
         toast.error(errMsg);
       } else {
-        const maybeUser = isRecord(data) ? getPartialForm((data as Record<string, unknown>)["user"]) : undefined;
+        const maybeUser = isRecord(data)
+          ? getPartialForm((data as Record<string, unknown>)["user"])
+          : undefined;
         if (maybeUser) {
           setFormData((prev) => ({ ...prev, ...maybeUser }));
         } else {
           setFormData((prev) => ({ ...prev, [field]: value }));
         }
-        toast.success(`${field.charAt(0).toUpperCase() + field.slice(1)} updated`);
+        toast.success(
+          `${field.charAt(0).toUpperCase() + field.slice(1)} updated`
+        );
         setIsEditing(null);
       }
     } catch (err) {
@@ -155,8 +169,14 @@ export default function ProfileSettingsPage() {
     <div className="min-h-screen bg-gradient-to-br from-[#0a140a] via-[#0f1a0f] to-[#0a140a] text-amber-100">
       {/* Header */}
       <header className="fixed top-0 inset-x-0 z-50 h-16 bg-white/5 backdrop-blur-2xl border-b border-amber-500/20 flex items-center justify-between px-6">
-        <Link href="/dashboard" className="group flex items-center gap-2 text-amber-200 hover:text-amber-100 text-sm font-medium transition-all">
-          <ArrowLeft size={16} className="group-hover:-translate-x-1 transition-transform" />
+        <Link
+          href="/dashboard"
+          className="group flex items-center gap-2 text-amber-200 hover:text-amber-100 text-sm font-medium transition-all"
+        >
+          <ArrowLeft
+            size={16}
+            className="group-hover:-translate-x-1 transition-transform"
+          />
           Dashboard
         </Link>
         <div className="flex items-center gap-2 text-amber-200 text-xs font-medium">
@@ -168,12 +188,17 @@ export default function ProfileSettingsPage() {
       {/* Main Content */}
       <main className="pt-20 pb-10 px-6 max-w-2xl mx-auto">
         <div className="text-center mb-12">
-          <h1 className="text-4xl font-black tracking-tight" style={{ fontFamily: "var(--font-cinzel), serif" }}>
+          <h1
+            className="text-4xl font-black tracking-tight"
+            style={{ fontFamily: "var(--font-cinzel), serif" }}
+          >
             <span className="bg-gradient-to-r from-amber-400 via-yellow-500 to-amber-300 bg-clip-text text-transparent">
               Profile Settings
             </span>
           </h1>
-          <p className="text-amber-200/70 mt-3">Make your presence truly yours</p>
+          <p className="text-amber-200/70 mt-3">
+            Make your presence truly yours
+          </p>
         </div>
 
         {/* Avatar */}
@@ -195,7 +220,9 @@ export default function ProfileSettingsPage() {
         <div className="space-y-6 bg-white/5 backdrop-blur-2xl rounded-xl p-8 border border-amber-500/20 shadow-2xl">
           {fieldDefs.map((field) => (
             <div key={field.key} className="group relative">
-              <label className="text-amber-200/70 text-sm font-medium">{field.label}</label>
+              <label className="text-amber-200/70 text-sm font-medium">
+                {field.label}
+              </label>
 
               {isEditing === field.key ? (
                 <div className="mt-2 flex items-center gap-3">

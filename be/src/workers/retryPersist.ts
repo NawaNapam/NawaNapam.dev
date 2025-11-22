@@ -1,4 +1,3 @@
-// src/workers/streamToNextMVP.ts
 import Redis from "ioredis";
 import fetch, { RequestInit } from "node-fetch";
 
@@ -86,7 +85,6 @@ async function ackAndDelete(ids: string[]) {
   try {
     await redis.xdel(STREAM_KEY, ...ids);
   } catch (e) {
-    // Not fatal; may lead to benign reprocessing (upsert must be idempotent)
     console.error("[worker] XDEL error", e);
   }
 }
