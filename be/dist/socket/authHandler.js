@@ -30,7 +30,7 @@ function handleAuth(socket, payload) {
         // lobal availability pools
         yield redisClient_1.redis.sadd("available", userId);
         yield redisClient_1.redis.zadd("available_by_time", now, userId);
-        // presence TTL (make sure your heartbeat refreshes this to > 2× heartbeat interval)
+        // presence TTL
         yield redisClient_1.redis.expire(`user:${userId}`, 30);
         socket.emit("auth:ok");
     });
