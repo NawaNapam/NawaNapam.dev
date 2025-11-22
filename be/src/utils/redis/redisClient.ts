@@ -1,11 +1,28 @@
-// src/redis/client.ts
 import Redis from "ioredis";
 
-// const REDIS_URL = process.env.REDIS_URL || "redis://127.0.0.1:6379";
-export const redis = new Redis();
-export const sub = new Redis();
+export const redis = new Redis({
+  username: process.env.REDIS_USERNAME,
+  password: process.env.REDIS_PASSWORD,
+  host: process.env.REDIS_HOST,
+  port: Number(process.env.REDIS_PORT),
+  tls: {},
+});
 
-// helper small wrapper
-export async function safeEvalSha(sha: string, ...args: any[]) {
-  return redis.evalsha(sha, 0, ...args);
+export const sub = new Redis({
+  username: process.env.REDIS_USERNAME,
+  password: process.env.REDIS_PASSWORD,
+  host: process.env.REDIS_HOST,
+  port: Number(process.env.REDIS_PORT),
+  tls: {},
+});
+
+
+// small wrapper for safe EVALSHA execution
+export async function safeEvalSha(sha: string, ...args: (string | number)[]) {
+  try {
+    return await redis.evalsha(sha, 0, ...args);
+  } catch (err) {
+    console.error("[safeEvalSha] Redis error:", err);
+    throw err;
+  }
 }
