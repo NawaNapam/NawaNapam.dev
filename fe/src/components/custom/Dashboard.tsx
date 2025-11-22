@@ -21,6 +21,9 @@ import {
 } from "lucide-react";
 import Image from "next/image";
 import Header from "./Header";
+import { useSignaling } from "@/lib/SocketProvider";
+import { useRouter } from "next/navigation";
+import { toast } from "sonner";
 
 export default function Dashboard() {
   const { data: session, status } = useSession();
@@ -56,6 +59,18 @@ export default function Dashboard() {
       if (!keywords.includes(val)) setKeywords(prev => [...prev, val]);
       setInputValue("");
     }
+  };
+
+  const router = useRouter();
+
+  const handleStart = (e?: React.MouseEvent) => {
+    e?.preventDefault();
+    if (!session?.user?.email) {
+      toast.error("Please sign in to start video chat.");
+      router.push("/api/auth/signin"); // or your sign-in route
+      return;
+    }
+    router.push("/chat"); // VideoChat page will auto-start
   };
 
   const removeKeyword = (i: number) => setKeywords(prev => prev.filter((_, idx) => idx !== i));
@@ -151,7 +166,8 @@ export default function Dashboard() {
             </div>
 
             <div className="space-y-6">
-              <Link href="/chat" className="group w-full text-center py-4 bg-gradient-to-r from-amber-500 to-yellow-600 text-black font-bold text-md rounded-lg transition-all flex items-center justify-center gap-3">
+              <Link href="" className="group w-full text-center py-4 bg-gradient-to-r from-amber-500 to-yellow-600 text-black font-bold text-md rounded-lg transition-all flex items-center justify-center gap-3"
+              onClick={handleStart}>
                 <Video size={24} className="group-hover:rotate-12 transition-transform hidden sm:block" /> Start Video Chat Now
               </Link>
 
