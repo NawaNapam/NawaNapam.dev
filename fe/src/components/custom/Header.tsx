@@ -5,7 +5,15 @@ import Image from "next/image";
 import { signOut } from "next-auth/react";
 import { useState } from "react";
 import { useAuthStore } from "@/stores/authStore";
-import { Menu, X, LogOut, Settings, LayoutDashboard, Globe, ArrowLeft } from "lucide-react";
+import {
+  Menu,
+  X,
+  LogOut,
+  Settings,
+  LayoutDashboard,
+  Globe,
+  ArrowLeft,
+} from "lucide-react";
 
 export default function Header() {
   const [dropdownOpen, setDropdownOpen] = useState(false);
@@ -29,7 +37,6 @@ export default function Header() {
   return (
     <header className="fixed top-0 inset-x-0 z-50 bg-gradient-to-b from-black/40 via-[#0f1a0f]/90 to-transparent backdrop-blur-2xl border-b border-amber-500/20 flex items-center justify-center">
       <div className="container h-16 flex items-center justify-between px-4 sm:px-6">
-
         {/* Logo + Brand Name */}
         <Link href="/" className="flex items-center gap-3 group">
           <div className="w-10 h-10 rounded-full overflow-hidden ring-2 ring-amber-500/40 shadow-lg transition-all group-hover:ring-amber-400 group-hover:scale-110">
@@ -53,7 +60,6 @@ export default function Header() {
 
         {/* Right Side */}
         <div className="flex items-center gap-4">
-
           {/* Authenticated User */}
           {isAuthenticated && user ? (
             <div className="relative">
@@ -77,12 +83,17 @@ export default function Header() {
 
               {/* Dropdown */}
               {dropdownOpen && (
-                <div className="absolute right-0 mt-3 w-64 origin-top-right rounded-md bg-black/70 backdrop-blur-2xl border border-amber-500/30 shadow-2xl overflow-hidden">
+                <div className="absolute right-0 mt-3 w-64 origin-top-right rounded-md bg-black backdrop-blur-2xl border border-amber-500/30 shadow-2xl overflow-hidden">
                   <div className="p-4 border-b border-amber-500/20">
-                    <p className="text-sm font-bold text-amber-100" style={{ fontFamily: "'Cinzel Decorative', serif" }}>
+                    <p
+                      className="text-sm font-bold text-amber-100"
+                      style={{ fontFamily: "'Cinzel Decorative', serif" }}
+                    >
                       {user.name || user.username}
                     </p>
-                    <p className="text-xs text-amber-300 truncate">{user.email}</p>
+                    <p className="text-xs text-amber-300 truncate">
+                      {user.email}
+                    </p>
                   </div>
                   <div className="py-2">
                     <Link
@@ -148,17 +159,35 @@ export default function Header() {
           <div className="container px-6 py-6 space-y-5">
             {!isAuthenticated && (
               <>
-                <Link href="#features" onClick={() => setMobileMenuOpen(false)} className="block py-3 text-amber-100 text-lg font-medium">
+                <Link
+                  href="#features"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="block py-3 text-amber-100 text-lg font-medium"
+                >
                   Features
                 </Link>
-                <Link href="#about" onClick={() => setMobileMenuOpen(false)} className="block py-3 text-amber-100 text-lg font-medium">
+                <Link
+                  href="#about"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="block py-3 text-amber-100 text-lg font-medium"
+                >
                   About
                 </Link>
               </>
             )}
             <div className="pt-4 border-t border-amber-500/30 space-y-3">
-              <Link href="/login" className="block text-amber-300 font-bold text-lg">Login</Link>
-              <Link href="/signup" className="block text-amber-300 font-bold text-lg">Join Now</Link>
+              <Link
+                href="/login"
+                className="block text-amber-300 font-bold text-lg"
+              >
+                Login
+              </Link>
+              <Link
+                href="/signup"
+                className="block text-amber-300 font-bold text-lg"
+              >
+                Join Now
+              </Link>
             </div>
           </div>
         </div>

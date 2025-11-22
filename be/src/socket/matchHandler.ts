@@ -1,4 +1,3 @@
-// src/socket/matchHandler.ts
 import { Socket } from "socket.io";
 import { redis } from "../utils/redis/redisClient";
 import { scripts } from "../utils/redis/scripts";
@@ -37,7 +36,7 @@ export async function handleMatchRequest(socket: Socket) {
     if (typeof raw === "string") {
       // Try JSON first
       if (raw.startsWith("{")) {
-        try { parsed = JSON.parse(raw); } catch { /* fallthrough */ }
+        try { parsed = JSON.parse(raw); } catch { }
       }
     } else if (raw && typeof raw === "object") {
       parsed = raw; // some redis clients return tables/objects

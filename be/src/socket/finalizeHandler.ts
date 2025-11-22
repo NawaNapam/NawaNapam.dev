@@ -1,4 +1,3 @@
-// src/socket/finalizeHandler.ts
 import { Socket } from "socket.io";
 import { redis } from "../utils/redis/redisClient";
 import { scripts } from "../utils/redis/scripts";

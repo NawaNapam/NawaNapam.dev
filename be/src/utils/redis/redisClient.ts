@@ -1,8 +1,6 @@
-// src/utils/redis/redisClient.ts
 import Redis, { RedisOptions } from "ioredis";
 
 function makeClient(label: string) {
-  // If REDIS_URL is provided, ioredis will infer TLS from rediss://
   const url = process.env.REDIS_URL;
   if (url) {
     const client = new Redis(url, {
@@ -32,7 +30,6 @@ function makeClient(label: string) {
     password,
     enableReadyCheck: true,
     maxRetriesPerRequest: 3,
-    // TLS only if you actually use the TLS port
     ...(useTLS ? { tls: { servername: host } } : {}),
   };
 

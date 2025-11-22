@@ -1,4 +1,3 @@
-// src/lib/signaling.ts
 import { io, Socket } from "socket.io-client";
 import { useEffect, useRef, useState, useCallback } from "react";
 
@@ -6,7 +5,8 @@ export type PeerInfo = { userId: string; username?: string };
 export type SignalingStatus = "idle" | "searching" | "matched" | "ended";
 
 let socket: Socket | null = null;
-const SIGNALING = process.env.NEXT_PUBLIC_SIGNALING_URL || "http://localhost:8080";
+const SIGNALING =
+  process.env.NEXT_PUBLIC_SIGNALING_URL || "http://localhost:8080";
 
 // keep the current identity to re-auth on reconnect
 let currentIdentity: { userId: string; username?: string } | null = null;
@@ -20,7 +20,9 @@ export function initSocket(url = SIGNALING) {
   if (socket) return socket;
   socket = io(url, { transports: ["websocket"], autoConnect: true });
 
-  socket.on("connect_error", (err) => console.error("[signaling] connect_error", err));
+  socket.on("connect_error", (err) =>
+    console.error("[signaling] connect_error", err)
+  );
   socket.on("connect", () => {
     console.debug("[signaling] connected", socket?.id);
     // re-auth on reconnect if we have identity
@@ -28,7 +30,9 @@ export function initSocket(url = SIGNALING) {
       socket!.emit("auth", currentIdentity);
     }
   });
-  socket.on("disconnect", (reason) => console.debug("[signaling] disconnected", reason));
+  socket.on("disconnect", (reason) =>
+    console.debug("[signaling] disconnected", reason)
+  );
   return socket;
 }
 
@@ -44,7 +48,12 @@ export function connectAuth(userId: string, username?: string) {
 /** Disconnect the global socket */
 export function disconnectSocket() {
   if (!socket) return;
-  try { socket.disconnect(); } finally { socket = null; currentIdentity = null; }
+  try {
+    socket.disconnect();
+  } finally {
+    socket = null;
+    currentIdentity = null;
+  }
 }
 
 /** Safe wrappers */
@@ -67,44 +76,65 @@ export function endRoom(roomId?: string) {
   else socket.emit("end:room", {});
 }
 
-export function onMatchFound(cb: (data: { peerId: string; peerUsername?: string; roomId?: string }) => void) {
+export function onMatchFound(
+  cb: (data: { peerId: string; peerUsername?: string; roomId?: string }) => void
+) {
   initSocket();
   if (!socket) throw new Error("Socket not initialized");
-  const handler = (data: { peerId: string; peerUsername?: string; roomId?: string }) => cb(data);
+  const handler = (data: {
+    peerId: string;
+    peerUsername?: string;
+    roomId?: string;
+  }) => cb(data);
   socket.on("match:found", handler);
-  return () => { socket?.off("match:found", handler); };
+  return () => {
+    socket?.off("match:found", handler);
+  };
 }
 
 export function onAuthOk(cb: () => void) {
   initSocket();
   if (!socket) throw new Error("Socket not initialized");
   socket.on("auth:ok", cb);
-  return () => { socket?.off("auth:ok", cb); };
+  return () => {
+    socket?.off("auth:ok", cb);
+  };
 }
 
 export function onMatchQueued(cb: () => void) {
   initSocket();
   if (!socket) throw new Error("Socket not initialized");
   socket.on("match:queued", cb);
-  return () => { socket?.off("match:queued", cb); };
+  return () => {
+    socket?.off("match:queued", cb);
+  };
 }
 
 export function onMatchError(cb: (err: unknown) => void) {
   initSocket();
   if (!socket) throw new Error("Socket not initialized");
   socket.on("match:error", cb);
-  return () => { socket?.off("match:error", cb); };
+  return () => {
+    socket?.off("match:error", cb);
+  };
 }
 
 export function onEndOk(cb: () => void) {
   initSocket();
   if (!socket) throw new Error("Socket not initialized");
   socket.on("end:ok", cb);
-  return () => { socket?.off("end:ok", cb); };
+  return () => {
+    socket?.off("end:ok", cb);
+  };
 }
 
-
-export function useSignaling({ userId, username }: { userId: string; username?: string }) {
+export function useSignaling({
+  userId,
+  username,
+}: {
+  userId: string;
+  username?: string;
+}) {
   const [status, setStatus] = useState<SignalingStatus>("idle");
   const [peer, setPeer] = useState<PeerInfo | null>(null);
   const [roomId, setRoomId] = useState<string | null>(null);
@@ -114,7 +144,9 @@ export function useSignaling({ userId, username }: { userId: string; username?: 
   const retryTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const hbTimerRef = useRef<NodeJS.Timeout | null>(null);
 
-  useEffect(() => { statusRef.current = status; }, [status]);
+  useEffect(() => {
+    statusRef.current = status;
+  }, [status]);
 
   useEffect(() => {
     if (!userId) return;
@@ -144,7 +176,11 @@ export function useSignaling({ userId, username }: { userId: string; username?: 
     startHeartbeat();
 
     // De-duped match:found
-    const onFound = (data: { peerId: string; peerUsername?: string; roomId?: string }) => {
+    const onFound = (data: {
+      peerId: string;
+      peerUsername?: string;
+      roomId?: string;
+    }) => {
       const rid = data.roomId ?? null;
       if (rid && lastMatchedRoomId === rid) return; // drop duplicate emit
       lastMatchedRoomId = rid;
@@ -162,7 +198,7 @@ export function useSignaling({ userId, username }: { userId: string; username?: 
     s.on("match:found", onFound);
     cleanupFns.push(() => s.off("match:found", onFound));
 
-    // Queued 
+    // Queued
     const onQueued = () => {
       setStatus("searching");
       if (retryTimerRef.current) return; // already scheduled
@@ -206,8 +242,14 @@ export function useSignaling({ userId, username }: { userId: string; username?: 
 
     return () => {
       cleanupFns.forEach((fn) => fn());
-      if (retryTimerRef.current) { clearTimeout(retryTimerRef.current); retryTimerRef.current = null; }
-      if (hbTimerRef.current) { clearInterval(hbTimerRef.current); hbTimerRef.current = null; }
+      if (retryTimerRef.current) {
+        clearTimeout(retryTimerRef.current);
+        retryTimerRef.current = null;
+      }
+      if (hbTimerRef.current) {
+        clearInterval(hbTimerRef.current);
+        hbTimerRef.current = null;
+      }
       socketRef.current = null;
     };
   }, [userId, username]);
@@ -221,7 +263,7 @@ export function useSignaling({ userId, username }: { userId: string; username?: 
     const ok = startMatch();
     if (!ok) socketRef.current?.emit("match:request");
     setStatus("searching");
-    console.log('first', socketRef.current, "start");
+    console.log("first", socketRef.current, "start");
   }, []);
 
   const next = useCallback(() => {
@@ -244,11 +286,22 @@ export function useSignaling({ userId, username }: { userId: string; username?: 
   }, [roomId]);
 
   const teardown = useCallback(() => {
-    try { socketRef.current?.disconnect(); } catch {}
+    try {
+      socketRef.current?.disconnect();
+    } catch {}
     socketRef.current = null;
     currentIdentity = null;
     lastMatchedRoomId = null;
   }, []);
 
-  return { status, peer, roomId, start, next, end, teardown, socket: socketRef.current };
+  return {
+    status,
+    peer,
+    roomId,
+    start,
+    next,
+    end,
+    teardown,
+    socket: socketRef.current,
+  };
 }
